@@ -6,8 +6,8 @@ import { propertyService } from '@/services/properties';
 import { uploadImage } from '@/libs/utils/image-upload';
 import { stateAndCities } from '@/libs/constant/malaysiaStates';
 import { useUser } from '@/hooks/useUser';
-import { User } from '@supabase/supabase-js';
 import Link from 'next/link';
+import AddressAutocomplete from './AddressAutocomplete';
 
 interface PropertyFormData {
     title: string;
@@ -21,6 +21,8 @@ interface PropertyFormData {
     addressLine2: string;
     state: string;
     city: string;
+    latitude: number;
+    longitude: number;
     amenities: string[];
     images: File[];
 }
@@ -42,6 +44,8 @@ const PropertyForm = () => {
       city: '',
       amenities: [],
       images: [],
+      latitude: 0,
+      longitude: 0,
     });
       
   const [previews, setPreviews] = useState<string[]>([]);
@@ -150,6 +154,8 @@ const PropertyForm = () => {
         user_id: user.id,
         status: 'published' as const,
         images: uploadedUrls,
+        latitude: formData.latitude,
+        longitude: formData.longitude
       };
 
       await propertyService.createProperty(propertyData);
@@ -169,6 +175,8 @@ const PropertyForm = () => {
         city: '',
         amenities: [],
         images: [],
+        longitude: 0,
+        latitude: 0
       });
       setPreviews([]);
       setUploadProgress(0);
@@ -306,6 +314,29 @@ const PropertyForm = () => {
             <Home className="h-5 w-5" />
             Location
           </h2>
+
+          {/* Add Google Places Autocomplete here */}
+          <div className="mt-4 mb-6">
+            <label className="block text-sm font-medium text-gray-700">
+              Search Address
+            </label>
+            <AddressAutocomplete onSelect={(details) => {
+              setFormData(prev => ({
+                ...prev,
+                addressLine1: details.addressLine1,
+                addressLine2: details.addressLine2,
+                state: details.state,
+                city: details.city,
+                latitude: details.latitude,
+                longitude: details.longitude,
+              }));
+            }} />
+            {formData.latitude !== 0 && (
+              <p className="mt-1 text-sm text-gray-500">
+                Location coordinates: {formData.latitude.toFixed(6)}, {formData.longitude.toFixed(6)}
+              </p>
+            )}
+          </div>
   
           <div className="mt-4">
             <label className="block text-sm font-medium text-gray-700">

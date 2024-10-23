@@ -18,6 +18,8 @@ export interface Property {
     user_id: string;
     status: 'draft' | 'published' | 'archived';
     images: string[];
+    latitude: number;
+    longitude: number;
   }
   
   export interface User {

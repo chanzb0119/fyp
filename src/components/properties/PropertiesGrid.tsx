@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
-import { Search, SlidersHorizontal } from 'lucide-react';
+import { Search } from 'lucide-react';
 import { propertyService } from '@/services/properties';
 import PropertyCard from './PropertyCard';
 import { Property } from '@/libs/types/database';

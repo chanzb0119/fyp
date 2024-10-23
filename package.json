@@ -9,16 +9,19 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@headlessui/react": "^2.1.10",
     "@radix-ui/react-dialog": "^1.1.2",
     "@radix-ui/react-dropdown-menu": "^2.1.2",
     "@radix-ui/react-select": "^2.1.2",
+    "@react-google-maps/api": "^2.20.3",
     "@supabase/auth-helpers-nextjs": "^0.10.0",
     "@supabase/supabase-js": "^2.45.6",
     "lucide-react": "^0.453.0",
     "next": "15.0.0",
-    "react": "19.0.0-rc-65a56d0e-20241020",
-    "react-dom": "19.0.0-rc-65a56d0e-20241020",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
     "supabase": "^1.207.8",
+    "use-places-autocomplete": "^4.0.1",
     "uuid": "^10.0.0"
   },
   "devDependencies": {
