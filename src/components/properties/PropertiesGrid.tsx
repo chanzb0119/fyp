@@ -128,8 +128,9 @@ const PropertiesGrid = () => {
               state={property.state}
               city={property.city}
               type={property.type}
-              imageUrl={property.images?.[0] || ''}
-            />
+              imageUrl={property.images?.[0] || ''} 
+              user_id={property.user_id}            
+              />
           ))}
         </div>
       )}

@@ -2,13 +2,22 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   images: {
-    domains: ['znoujhfvqhcxwjlafcvf.supabase.co'], // Replace with your Supabase project domain
+    domains: ['znoujhfvqhcxwjlafcvf.supabase.co','lh3.googleusercontent.com'], 
     remotePatterns: [
       {
         protocol: 'https',
         hostname: '**.supabase.co',
       },
     ],
+  },
+  async redirects() {
+    return [
+      {
+        source: '/auth/callback',
+        destination: '/',
+        permanent: false,
+      },
+    ]
   },
 };
 

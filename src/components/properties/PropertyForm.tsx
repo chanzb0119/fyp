@@ -4,8 +4,10 @@ import React, { useState, useCallback } from 'react';
 import { Building2, Home, Info, Upload, X } from 'lucide-react';
 import { propertyService } from '@/services/properties';
 import { uploadImage } from '@/libs/utils/image-upload';
-import { stateAndCities } from '@/libs/constant/malaysiaStates'
-import { Property } from '@/libs/types/database';
+import { stateAndCities } from '@/libs/constant/malaysiaStates';
+import { useUser } from '@/hooks/useUser';
+import { User } from '@supabase/supabase-js';
+import Link from 'next/link';
 
 interface PropertyFormData {
     title: string;
@@ -24,27 +26,28 @@ interface PropertyFormData {
 }
 
 const PropertyForm = () => {
+  const { user } = useUser()
 
-    const [formData, setFormData] = useState<PropertyFormData>({
-        title: '',
-        type: '',
-        price: '',
-        bedrooms: '',
-        bathrooms: '',
-        size: '',
-        description: '',
-        addressLine1: '',
-        addressLine2: '',
-        state: '',
-        city: '',
-        amenities: [],
-        images: [],
-      });
+  const [formData, setFormData] = useState<PropertyFormData>({
+      title: '',
+      type: '',
+      price: '',
+      bedrooms: '',
+      bathrooms: '',
+      size: '',
+      description: '',
+      addressLine1: '',
+      addressLine2: '',
+      state: '',
+      city: '',
+      amenities: [],
+      images: [],
+    });
       
-    const [previews, setPreviews] = useState<string[]>([]);
-    const [isSubmitting, setIsSubmitting] = useState(false);
-    const [error, setError] = useState<string | null>(null);
-    const [uploadProgress, setUploadProgress] = useState(0);
+  const [previews, setPreviews] = useState<string[]>([]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [uploadProgress, setUploadProgress] = useState(0);
 
   const propertyTypes: string[] = [
     'Apartment',
@@ -112,6 +115,12 @@ const PropertyForm = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (!user) {
+      setError('Please sign in to create a listing');
+      return;
+    }
+
     setIsSubmitting(true);
     setError(null);
     setUploadProgress(0);
@@ -138,7 +147,7 @@ const PropertyForm = () => {
         state: formData.state,
         city: formData.city,
         amenities: formData.amenities,
-        user_id: '00000000-0000-0000-0000-000000000000',
+        user_id: user.id,
         status: 'published' as const,
         images: uploadedUrls,
       };
@@ -169,6 +178,20 @@ const PropertyForm = () => {
       setIsSubmitting(false);
     }
   };
+
+  if (!user) {
+    return (
+      <div className="text-center py-12">
+        <p className="text-lg text-gray-600">Please sign in to create a listing</p>
+        <Link 
+          href="/login"
+          className="mt-4 inline-block bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700"
+        >
+          Sign In
+        </Link>
+      </div>
+    );
+  }
 
   return (
     <form onSubmit={handleSubmit} className="max-w-2xl mx-auto space-y-8">

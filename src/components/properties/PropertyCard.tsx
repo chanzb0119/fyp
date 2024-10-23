@@ -4,6 +4,7 @@ import React from 'react';
 import { Bed, Bath, Square, MapPin } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useUser } from '@/hooks/useUser';
 
 interface PropertyCardProps {
   id: string;
@@ -16,6 +17,7 @@ interface PropertyCardProps {
   city: string;
   type: string;
   imageUrl: string;
+  user_id: string;
 }
 
 const PropertyCard = ({ 
@@ -28,8 +30,12 @@ const PropertyCard = ({
   state,
   city, 
   type,
-  imageUrl 
+  imageUrl,
+  user_id
 }: PropertyCardProps) => {
+  const { user } = useUser();
+
+  const isOwner = user?.id === user_id;
   return (
     <Link href={`/properties/${id}`} className="block bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow">
       {/* Property Image */}
@@ -45,6 +51,11 @@ const PropertyCard = ({
         <div className="absolute top-2 right-2 bg-blue-600 text-white px-2 py-1 rounded text-sm">
           {type}
         </div>
+        {isOwner && (
+        <div className="absolute top-2 left-2 bg-blue-600 text-white px-2 py-1 rounded text-sm">
+          Your Property
+        </div>
+        )}
       </div>
 
       {/* Property Details */}
@@ -79,6 +90,8 @@ const PropertyCard = ({
           <MapPin className="w-4 h-4 mt-0.5" />
           <span className="text-sm truncate">{state + ", " + city}</span>
         </div>
+
+        
       </div>
     </Link>
   );
