@@ -6,17 +6,20 @@ import { propertyService } from '@/services/properties';
 import PropertyCard from './PropertyCard';
 import { Property } from '@/libs/types/database';
 
-const PropertiesGrid = () => {
+interface GridViewProps {
+  searchTerm: string;
+  filters: {
+    propertyType: string;
+    minPrice: string;
+    maxPrice: string;
+    bedrooms: string;
+  };
+}
+
+const GridView: React.FC<GridViewProps> = ({searchTerm, filters}) => {
   const [properties, setProperties] = useState<Property[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [filters, setFilters] = useState({
-    minPrice: '',
-    maxPrice: '',
-    bedrooms: '',
-    propertyType: ''
-  });
 
   useEffect(() => {
     loadProperties();
@@ -51,63 +54,6 @@ const PropertiesGrid = () => {
 
   return (
     <div className="space-y-6">
-      {/* Search and Filters */}
-      <div className="bg-white p-4 rounded-lg shadow-sm space-y-4">
-        {/* Search Bar */}
-        <div className="relative">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
-          <input
-            type="text"
-            placeholder="Search by title or location..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-        </div>
-
-        {/* Filters */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
-          <select
-            value={filters.propertyType}
-            onChange={(e) => setFilters(prev => ({ ...prev, propertyType: e.target.value }))}
-            className="border rounded-lg p-2"
-          >
-            <option value="">Property Type</option>
-            <option value="Apartment">Apartment</option>
-            <option value="House">House</option>
-            <option value="Condo">Condo</option>
-            <option value="Townhouse">Townhouse</option>
-          </select>
-
-          <input
-            type="number"
-            placeholder="Min Price"
-            value={filters.minPrice}
-            onChange={(e) => setFilters(prev => ({ ...prev, minPrice: e.target.value }))}
-            className="border rounded-lg p-2"
-          />
-
-          <input
-            type="number"
-            placeholder="Max Price"
-            value={filters.maxPrice}
-            onChange={(e) => setFilters(prev => ({ ...prev, maxPrice: e.target.value }))}
-            className="border rounded-lg p-2"
-          />
-
-          <select
-            value={filters.bedrooms}
-            onChange={(e) => setFilters(prev => ({ ...prev, bedrooms: e.target.value }))}
-            className="border rounded-lg p-2"
-          >
-            <option value="">Bedrooms</option>
-            <option value="1">1</option>
-            <option value="2">2</option>
-            <option value="3">3</option>
-            <option value="4">4+</option>
-          </select>
-        </div>
-      </div>
 
       {/* Properties Grid */}
       {loading ? (
@@ -145,4 +91,4 @@ const PropertiesGrid = () => {
   );
 };
 
-export default PropertiesGrid;
+export default GridView;

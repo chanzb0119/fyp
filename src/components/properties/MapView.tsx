@@ -1,38 +1,57 @@
-// src/components/properties/MapView.tsx
 "use client";
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { GoogleMap, Marker, InfoWindow } from '@react-google-maps/api';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Heart, Share2 } from 'lucide-react';
-
-interface Property {
-  id: string;
-  title: string;
-  price: number;
-  bedrooms: number;
-  bathrooms: number;
-  size: number;
-  addressLine1: string;
-  addressLine2: string;
-  state: string;
-  city: string;
-  latitude: number;
-  longitude: number;
-  images: string[];
-  type: string;
-}
+import { propertyService } from '@/services/properties';
+import { Property } from '@/libs/types/database';
 
 interface MapViewProps {
-  properties: Property[];
+  searchTerm: string;
+  filters: {
+    propertyType: string;
+    minPrice: string;
+    maxPrice: string;
+    bedrooms: string;
+  };
 }
 
-const MapView = ({ properties }: MapViewProps) => {
+const MapView = ({ searchTerm, filters }: MapViewProps) => {
   const [selectedProperty, setSelectedProperty] = useState<Property | null>(null);
   const [map, setMap] = useState<google.maps.Map | null>(null);
+  const [properties, setProperties] = useState<Property[]>([]);
 
-  // Center map on Malaysia
+  useEffect(() => {
+    loadProperties();
+  }, []);
+
+  const loadProperties = async () => {
+    try {
+      const data = await propertyService.getProperties();
+      setProperties(data);
+    } catch (err) {
+      console.error(err);
+    } 
+  };
+
+  // Filter properties based on search and filters
+  const filteredProperties = properties.filter(property => {
+    const matchesSearch = property.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         property.city.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         property.state.toLowerCase().includes(searchTerm.toLowerCase());
+    
+    const matchesPrice = (!filters.minPrice || property.price >= parseFloat(filters.minPrice)) &&
+                        (!filters.maxPrice || property.price <= parseFloat(filters.maxPrice));
+    
+    const matchesBedrooms = !filters.bedrooms || property.bedrooms === parseInt(filters.bedrooms);
+    
+    const matchesType = !filters.propertyType || property.type === filters.propertyType;
+
+    return matchesSearch && matchesPrice && matchesBedrooms && matchesType;
+  });
+
   const defaultCenter = {
     lat: 3.140853,
     lng: 101.693207
@@ -40,11 +59,10 @@ const MapView = ({ properties }: MapViewProps) => {
 
   const [currentCenter, setCurrentCenter] = useState(defaultCenter);
 
-  // Helper function to zoom to property
   const zoomToProperty = (property: Property) => {
     if (map) {
       map.panTo({ lat: property.latitude, lng: property.longitude });
-      map.setZoom(16); // Increase zoom level when property is selected
+      map.setZoom(16);
     }
   };
 
@@ -62,19 +80,18 @@ const MapView = ({ properties }: MapViewProps) => {
     ]
   };
 
-  
   return (
-    <div className="flex h-[calc(100vh-64px)]"> {/* Subtract navbar height */}
+    <div className="flex h-[calc(100vh-132px)]"> {/* Adjusted for SearchHeader height */}
       {/* Property List */}
-      <div className="w-1/3 overflow-y-auto p-4 bg-white border-r">
-        <div className="space-y-4">
-          {properties.map((property) => (
+      <div className="w-1/3 overflow-y-auto bg-white border-r">
+        <div className="space-y-4 p-4">
+          {filteredProperties.map((property) => (
             <div
               key={property.id}
               className="bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow cursor-pointer"
               onClick={() => {
                 setSelectedProperty(property);
-                map?.panTo({ lat: property.latitude, lng: property.longitude });
+                zoomToProperty(property);
               }}
             >
               {/* Property Card */}
@@ -120,12 +137,12 @@ const MapView = ({ properties }: MapViewProps) => {
       <div className="w-2/3">
         <GoogleMap
           mapContainerClassName="w-full h-full"
-          center={defaultCenter}
+          center={currentCenter}
           zoom={defaultZoom}
           onLoad={setMap}
           options={mapOptions}
         >
-          {properties.map((property) => (
+          {filteredProperties.map((property) => (
             <Marker
               key={property.id}
               position={{ lat: property.latitude, lng: property.longitude }}
@@ -133,9 +150,9 @@ const MapView = ({ properties }: MapViewProps) => {
                 setSelectedProperty(property);
                 zoomToProperty(property);
                 setCurrentCenter({
-                    lat: property.latitude,
-                    lng: property.longitude
-                  });
+                  lat: property.latitude,
+                  lng: property.longitude
+                });
               }}
               label={{
                 text: `RM ${property.price.toLocaleString()}`,
@@ -152,13 +169,12 @@ const MapView = ({ properties }: MapViewProps) => {
               }}
               onCloseClick={() => {
                 setSelectedProperty(null);
-                // Keep the current center and zoom level
-                if(map){
-                    map.setCenter(currentCenter);
+                if(map) {
+                  map.setCenter(currentCenter);
                 }
               }}
             >
-              <div className="w-[280px]"> {/* Fixed width for more square appearance */}
+              <div className="w-[280px]">
                 <div className="aspect-[4/3] relative w-full mb-3">
                   <Image
                     src={selectedProperty.images[0] || '/placeholder.jpg'}
