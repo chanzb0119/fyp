@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { GoogleMap, Marker, InfoWindow } from '@react-google-maps/api';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -22,6 +22,11 @@ const MapView = ({ searchTerm, filters }: MapViewProps) => {
   const [selectedProperty, setSelectedProperty] = useState<Property | null>(null);
   const [map, setMap] = useState<google.maps.Map | null>(null);
   const [properties, setProperties] = useState<Property[]>([]);
+  const [places, setPlaces] = useState<google.maps.places.PlaceResult[]>([]);
+  const [selectedPlace, setSelectedPlace] = useState<google.maps.places.PlaceResult | null>(null);
+
+  // Reference for Places Service
+  const placesService = useRef<google.maps.places.PlacesService | null>(null);
 
   useEffect(() => {
     loadProperties();
@@ -34,6 +39,42 @@ const MapView = ({ searchTerm, filters }: MapViewProps) => {
     } catch (err) {
       console.error(err);
     } 
+  };
+
+  // Function to search nearby places
+  const searchNearbyPlaces = (location: google.maps.LatLng) => {
+    if (!placesService.current) return;
+
+    const request = {
+      location: location,
+      radius: 1000, // 1km radius
+      type: ['restaurant', 'gas_station', 'shopping_mall', 'school', 'subway_station', 'bus_station']
+    };
+
+    placesService.current.nearbySearch(
+      request,
+      (results: google.maps.places.PlaceResult[] | null, status: google.maps.places.PlacesServiceStatus) => {
+        if (status === google.maps.places.PlacesServiceStatus.OK && results) {
+          setPlaces(results);
+        }
+      }
+    );
+  };
+
+  // Initialize map and places service
+  const handleMapLoad = (map: google.maps.Map) => {
+    setMap(map);
+    placesService.current = new google.maps.places.PlacesService(map);
+  };
+
+  // Update places when map is idle
+  const handleMapIdle = () => {
+    if (map) {
+      const center = map.getCenter();
+      if (center) {
+        searchNearbyPlaces(center);
+      }
+    }
   };
 
   // Filter properties based on search and filters
@@ -71,13 +112,8 @@ const MapView = ({ searchTerm, filters }: MapViewProps) => {
   const mapOptions = {
     disableDefaultUI: true,
     zoomControl: true,
-    styles: [
-      {
-        featureType: "poi",
-        elementType: "labels",
-        stylers: [{ visibility: "off" }]
-      }
-    ]
+    //Google Maps POIS
+    styles: []
   };
 
   return (
@@ -136,91 +172,139 @@ const MapView = ({ searchTerm, filters }: MapViewProps) => {
       {/* Map */}
       <div className="w-2/3">
         <GoogleMap
-          mapContainerClassName="w-full h-full"
-          center={currentCenter}
-          zoom={defaultZoom}
-          onLoad={setMap}
-          options={mapOptions}
-        >
-          {filteredProperties.map((property) => (
-            <Marker
-              key={property.id}
-              position={{ lat: property.latitude, lng: property.longitude }}
-              onClick={() => {
-                setSelectedProperty(property);
-                zoomToProperty(property);
-                setCurrentCenter({
-                  lat: property.latitude,
-                  lng: property.longitude
-                });
-              }}
-              label={{
-                text: `RM ${property.price.toLocaleString()}`,
-                className: 'marker-label'
-              }}
-            />
-          ))}
+            mapContainerClassName="w-full h-full"
+            center={currentCenter}
+            zoom={defaultZoom}
+            onLoad={handleMapLoad}
+            onIdle={handleMapIdle}
+            options={mapOptions}
+          >
+            {/* Property Markers */}
+            {filteredProperties.map((property) => (
+              <Marker
+                key={property.id}
+                position={{ lat: property.latitude, lng: property.longitude }}
+                onClick={() => {
+                  setSelectedProperty(property);
+                  zoomToProperty(property);
+                  setCurrentCenter({
+                    lat: property.latitude,
+                    lng: property.longitude
+                  });
+                }}
+                label={{
+                  text: `RM ${property.price.toLocaleString()}`,
+                  className: 'marker-label'
+                }}
+              />
+            ))}
+            
+            {/* Places Markers */}
+            {places.map((place, index) => (
+              <Marker
+                key={`place-${index}`}
+                position={{
+                  lat: place.geometry?.location?.lat() || 0,
+                  lng: place.geometry?.location?.lng() || 0
+                }}
+                icon={{
+                  url: place.icon as string,
+                  scaledSize: new google.maps.Size(24, 24)
+                }}
+                onClick={() => {
+                  setSelectedPlace(place);
+                  setSelectedProperty(null);
+                }}
+              />
+            ))}
 
-          {selectedProperty && (
-            <InfoWindow
-              position={{
-                lat: selectedProperty.latitude,
-                lng: selectedProperty.longitude
-              }}
-              onCloseClick={() => {
-                setSelectedProperty(null);
-                if(map) {
-                  map.setCenter(currentCenter);
-                }
-              }}
-            >
-              <div className="w-[280px]">
-                <div className="aspect-[4/3] relative w-full mb-3">
-                  <Image
-                    src={selectedProperty.images[0] || '/placeholder.jpg'}
-                    alt={selectedProperty.title}
-                    fill
-                    className="object-cover rounded-lg"
-                  />
-                  <div className="absolute top-2 right-2 space-x-2">
-                    <button className="p-1.5 bg-white rounded-full shadow-md hover:bg-gray-100">
-                      <Share2 className="h-4 w-4" />
-                    </button>
-                    <button className="p-1.5 bg-white rounded-full shadow-md hover:bg-gray-100">
-                      <Heart className="h-4 w-4" />
-                    </button>
+            {/* Property InfoWindow */}
+            {selectedProperty && (
+              <InfoWindow
+                position={{
+                  lat: selectedProperty.latitude,
+                  lng: selectedProperty.longitude
+                }}
+                onCloseClick={() => {
+                  setSelectedProperty(null);
+                  if(map) {
+                    map.setCenter(currentCenter);
+                  }
+                }}
+              >
+                <div className="w-[280px]">
+                  <div className="aspect-[4/3] relative w-full mb-3">
+                    <Image
+                      src={selectedProperty.images[0] || '/placeholder.jpg'}
+                      alt={selectedProperty.title}
+                      fill
+                      className="object-cover rounded-lg"
+                    />
+                    <div className="absolute top-2 right-2 space-x-2">
+                      <button className="p-1.5 bg-white rounded-full shadow-md hover:bg-gray-100">
+                        <Share2 className="h-4 w-4" />
+                      </button>
+                      <button className="p-1.5 bg-white rounded-full shadow-md hover:bg-gray-100">
+                        <Heart className="h-4 w-4" />
+                      </button>
+                    </div>
+                    <div className="absolute top-2 left-2 bg-blue-600 text-white px-2 py-1 rounded-md text-sm">
+                      {selectedProperty.type}
+                    </div>
                   </div>
-                  <div className="absolute top-2 left-2 bg-blue-600 text-white px-2 py-1 rounded-md text-sm">
-                    {selectedProperty.type}
+
+                  <div className="space-y-2">
+                    <h3 className="font-semibold text-lg">
+                      RM {selectedProperty.price.toLocaleString()}/month
+                    </h3>
+                    <div className="flex items-center gap-3 text-gray-600 text-sm">
+                      <span>{selectedProperty.bedrooms} Beds</span>
+                      <span>•</span>
+                      <span>{selectedProperty.bathrooms} Baths</span>
+                      <span>•</span>
+                      <span>{selectedProperty.size} sqft</span>
+                    </div>
+                    <p className="text-gray-600 text-sm">
+                      {selectedProperty.addressLine1},
+                      <br />
+                      {selectedProperty.city}, {selectedProperty.state}
+                    </p>
+                    <Link
+                      href={`/properties/${selectedProperty.id}`}
+                      className="inline-block mt-2 px-4 py-2 bg-blue-600 text-white rounded-md text-sm hover:bg-blue-700 transition-colors w-full text-center"
+                    >
+                      View Details
+                    </Link>
                   </div>
                 </div>
+              </InfoWindow>
+            )}
 
-                <div className="space-y-2">
-                  <h3 className="font-semibold text-lg">
-                    RM {selectedProperty.price.toLocaleString()}/month
-                  </h3>
-                  <div className="flex items-center gap-3 text-gray-600 text-sm">
-                    <span>{selectedProperty.bedrooms} Beds</span>
-                    <span>•</span>
-                    <span>{selectedProperty.bathrooms} Baths</span>
-                    <span>•</span>
-                    <span>{selectedProperty.size} sqft</span>
-                  </div>
-                  <p className="text-gray-600 text-sm">
-                    {selectedProperty.addressLine1},
-                    <br />
-                    {selectedProperty.city}, {selectedProperty.state}
-                  </p>
-                  <Link
-                    href={`/properties/${selectedProperty.id}`}
-                    className="inline-block mt-2 px-4 py-2 bg-blue-600 text-white rounded-md text-sm hover:bg-blue-700 transition-colors w-full text-center"
-                  >
-                    View Details
-                  </Link>
+            {/* Place InfoWindow */}
+            {selectedPlace && selectedPlace.geometry && (
+              <InfoWindow
+                position={{
+                  lat: selectedPlace.geometry.location?.lat() || 0,
+                  lng: selectedPlace.geometry.location?.lng() || 0
+                }}
+                onCloseClick={() => setSelectedPlace(null)}
+              >
+                <div className="p-2 max-w-[200px]">
+                  <h3 className="font-semibold mb-1">{selectedPlace.name}</h3>
+                  {selectedPlace.vicinity && (
+                    <p className="text-sm text-gray-600 mb-1">{selectedPlace.vicinity}</p>
+                  )}
+                  {selectedPlace.rating && (
+                    <div className="text-sm">
+                      Rating: {selectedPlace.rating} ⭐
+                      {selectedPlace.user_ratings_total && 
+                        ` (${selectedPlace.user_ratings_total} reviews)`
+                      }
+                    </div>
+                  )}
                 </div>
-              </div>
-            </InfoWindow>
-          )}
+              </InfoWindow>
+            )}
         </GoogleMap>
       </div>
     </div>
