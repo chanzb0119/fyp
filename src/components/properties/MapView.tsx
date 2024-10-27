@@ -22,7 +22,7 @@ const MapView = ({ searchTerm, filters }: MapViewProps) => {
   const [selectedProperty, setSelectedProperty] = useState<Property | null>(null);
   const [map, setMap] = useState<google.maps.Map | null>(null);
   const [properties, setProperties] = useState<Property[]>([]);
-  const [places, setPlaces] = useState<google.maps.places.PlaceResult[]>([]);
+  
   const [selectedPlace, setSelectedPlace] = useState<google.maps.places.PlaceResult | null>(null);
 
   // Reference for Places Service
@@ -41,40 +41,10 @@ const MapView = ({ searchTerm, filters }: MapViewProps) => {
     } 
   };
 
-  // Function to search nearby places
-  const searchNearbyPlaces = (location: google.maps.LatLng) => {
-    if (!placesService.current) return;
-
-    const request = {
-      location: location,
-      radius: 1000, // 1km radius
-      type: ['restaurant', 'gas_station', 'shopping_mall', 'school', 'subway_station', 'bus_station']
-    };
-
-    placesService.current.nearbySearch(
-      request,
-      (results: google.maps.places.PlaceResult[] | null, status: google.maps.places.PlacesServiceStatus) => {
-        if (status === google.maps.places.PlacesServiceStatus.OK && results) {
-          setPlaces(results);
-        }
-      }
-    );
-  };
-
   // Initialize map and places service
   const handleMapLoad = (map: google.maps.Map) => {
     setMap(map);
     placesService.current = new google.maps.places.PlacesService(map);
-  };
-
-  // Update places when map is idle
-  const handleMapIdle = () => {
-    if (map) {
-      const center = map.getCenter();
-      if (center) {
-        searchNearbyPlaces(center);
-      }
-    }
   };
 
   // Filter properties based on search and filters
@@ -176,7 +146,6 @@ const MapView = ({ searchTerm, filters }: MapViewProps) => {
             center={currentCenter}
             zoom={defaultZoom}
             onLoad={handleMapLoad}
-            onIdle={handleMapIdle}
             options={mapOptions}
           >
             {/* Property Markers */}
@@ -197,26 +166,7 @@ const MapView = ({ searchTerm, filters }: MapViewProps) => {
                   className: 'marker-label'
                 }}
               />
-            ))}
-            
-            {/* Places Markers */}
-            {places.map((place, index) => (
-              <Marker
-                key={`place-${index}`}
-                position={{
-                  lat: place.geometry?.location?.lat() || 0,
-                  lng: place.geometry?.location?.lng() || 0
-                }}
-                icon={{
-                  url: place.icon as string,
-                  scaledSize: new google.maps.Size(24, 24)
-                }}
-                onClick={() => {
-                  setSelectedPlace(place);
-                  setSelectedProperty(null);
-                }}
-              />
-            ))}
+            ))}  
 
             {/* Property InfoWindow */}
             {selectedProperty && (
