@@ -89,7 +89,7 @@ const MapView = ({ searchTerm, filters }: MapViewProps) => {
   return (
     <div className="flex h-[calc(100vh-132px)]"> {/* Adjusted for SearchHeader height */}
       {/* Property List */}
-      <div className="w-1/3 overflow-y-auto bg-white border-r">
+      <div className="w-1/4 overflow-y-auto bg-white border-r">
         <div className="space-y-4 p-4">
           {filteredProperties.map((property) => (
             <div
@@ -98,6 +98,10 @@ const MapView = ({ searchTerm, filters }: MapViewProps) => {
               onClick={() => {
                 setSelectedProperty(property);
                 zoomToProperty(property);
+                setCurrentCenter({
+                  lat: property.latitude,
+                  lng: property.longitude
+                });
               }}
             >
               {/* Property Card */}
@@ -140,7 +144,7 @@ const MapView = ({ searchTerm, filters }: MapViewProps) => {
       </div>
 
       {/* Map */}
-      <div className="w-2/3">
+      <div className="w-3/4">
         <GoogleMap
             mapContainerClassName="w-full h-full"
             center={currentCenter}
