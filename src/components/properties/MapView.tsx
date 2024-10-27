@@ -4,7 +4,7 @@ import { useEffect, useState, useRef } from 'react';
 import { GoogleMap, Marker, InfoWindow } from '@react-google-maps/api';
 import Link from 'next/link';
 import Image from 'next/image';
-import { Heart, Share2 } from 'lucide-react';
+import { Bath, Bed, Heart, Share2 } from 'lucide-react';
 import { propertyService } from '@/services/properties';
 import { Property } from '@/libs/types/database';
 
@@ -187,7 +187,7 @@ const MapView = ({ searchTerm, filters }: MapViewProps) => {
                 }}
               >
                 <div className="w-[280px]">
-                  <div className="aspect-[4/3] relative w-full mb-3">
+                  <div className="aspect-[16/10] relative w-full mb-3">
                     <Image
                       src={selectedProperty.images[0] || '/placeholder.jpg'}
                       alt={selectedProperty.title}
@@ -207,21 +207,19 @@ const MapView = ({ searchTerm, filters }: MapViewProps) => {
                     </div>
                   </div>
 
-                  <div className="space-y-2">
+                  <div className="space-y-1">
                     <h3 className="font-semibold text-lg">
                       RM {selectedProperty.price.toLocaleString()}/month
                     </h3>
-                    <div className="flex items-center gap-3 text-gray-600 text-sm">
-                      <span>{selectedProperty.bedrooms} Beds</span>
+                    <div className="flex items-center gap-2 text-gray-600 text-sm">
+                      <span className='flex items-center gap-1'>{selectedProperty.bedrooms} <Bed/></span>
                       <span>•</span>
-                      <span>{selectedProperty.bathrooms} Baths</span>
+                      <span className='flex items-center gap-1'>{selectedProperty.bathrooms} <Bath/></span>
                       <span>•</span>
-                      <span>{selectedProperty.size} sqft</span>
+                      <span className='flex items-center gap-1'>{selectedProperty.size} sqft</span>
                     </div>
                     <p className="text-gray-600 text-sm">
-                      {selectedProperty.addressLine1},
-                      <br />
-                      {selectedProperty.city}, {selectedProperty.state}
+                      {selectedProperty.addressLine1}, {selectedProperty.city}, {selectedProperty.state}
                     </p>
                     <Link
                       href={`/properties/${selectedProperty.id}`}
