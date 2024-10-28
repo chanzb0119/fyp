@@ -2,7 +2,6 @@ import MainLayout from '@/components/layout/MainLayout'
 import { ReactNode } from 'react'
 import './globals.css'
 import Script from 'next/script'
-import { GOOGLE_MAPS_API_KEY } from '@/libs/google-maps'
 import ChatInterface2 from '@/components/chat/ChatInterface2'
 
 export default function RootLayout({
@@ -15,7 +14,7 @@ export default function RootLayout({
       <head>
         
         <Script
-          src={`https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAPS_API_KEY}&libraries=places&callback=Function.prototype`}
+          src={`https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_MAP_API_KEY}&libraries=places&callback=Function.prototype`}
           strategy="beforeInteractive"
         />
       </head>

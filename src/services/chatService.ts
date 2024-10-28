@@ -1,5 +1,5 @@
 // src/services/chatService.ts
-import { claude } from '@/libs/claude';
+import { claude } from '@/services/claude';
 import { Message, ChatContext, IntentAnalysis } from '@/libs/types/chat';
 import { v4 as uuidv4 } from 'uuid';
 
