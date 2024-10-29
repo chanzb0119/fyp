@@ -1,121 +1,186 @@
-// src/components/chat/ChatInterface.tsx
 "use client";
 
-import { useState, useRef, useEffect } from 'react';
-import { Message, ChatContext } from '@/libs/types/chat';
+import { useState } from 'react';
 import { chatService } from '@/services/chatService';
-import { v4 as uuidv4 } from 'uuid';
+import { X, MessageCircle } from 'lucide-react';
+import Image from 'next/image';
+import { Property } from '@/libs/types/database';
+import Link from 'next/link';
 
-export default function ChatInterface() {
-  const [messages, setMessages] = useState<Message[]>([]);
+interface Message {
+  id: string;
+  role: 'user' | 'assistant';
+  content: string;
+  matches?: Array<{
+    property: Property;
+    matchScore: number;
+    explanation?: string;
+  }>;
+}
+
+export default function ChatInterface2() {
+  const [isOpen, setIsOpen] = useState(false);
+  const [messages, setMessages] = useState<Message[]>([
+    {
+      id: '1',
+      role: 'assistant',
+      content: 'Hi! How can I help you find a property? You can ask me things like "Find an apartment in Kampar under RM500"'
+    }
+  ]);
   const [isLoading, setIsLoading] = useState(false);
-  const [context, setContext] = useState<ChatContext>({
-    conversationHistory: []
-  });
-  const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  };
+  const handleSubmit = async (userInput: string) => {
+    if (!userInput.trim()) return;
 
-  useEffect(() => {
-    scrollToBottom();
-  }, [messages]);
-
-  const handleSubmit = async (message: string) => {
-    if (!message.trim()) return;
-
-    // Add user message
     const userMessage: Message = {
-      id: uuidv4(),
+      id: crypto.randomUUID(),
       role: 'user',
-      content: message,
-      timestamp: new Date()
+      content: userInput
     };
-
     setMessages(prev => [...prev, userMessage]);
     setIsLoading(true);
 
     try {
-      // Process message
-
-      const intent = await chatService.identifyIntent(message);
-      const response = await chatService.generateResponse(intent, {
-        ...context,
-        conversationHistory: [...messages, userMessage]
-      });
-
-      // Add assistant message
-      
-      setMessages(prev => [...prev, response]);
-      setContext(prev => ({
-        ...prev,
-        conversationHistory: [...prev.conversationHistory, userMessage, response]
-      }));
-    } catch (error) {
-      console.error('Chat error:', error);
-      // Add error message
-      setMessages(prev => [...prev, {
-        id: uuidv4(),
+      const response = await chatService.getResponse(userInput);
+      const assistantMessage: Message = {
+        id: crypto.randomUUID(),
         role: 'assistant',
-        content: 'Sorry, I encountered an error. Please try again.',
-        timestamp: new Date()
-      }]);
+        content: response.content,
+        matches: response.matches
+      };
+      setMessages(prev => [...prev, assistantMessage]);
+    } catch (error) {
+      console.error('Error:', error);
     } finally {
       setIsLoading(false);
     }
   };
 
+  // Floating chat button
+  if (!isOpen) {
+    return (
+      <button
+        onClick={() => setIsOpen(true)}
+        className="fixed bottom-4 right-4 w-14 h-14 bg-blue-600 text-white rounded-full shadow-lg hover:bg-blue-700 flex items-center justify-center"
+      >
+        <MessageCircle size={24} />
+      </button>
+    );
+  }
+
   return (
-    <div className="fixed bottom-4 right-4 w-96 bg-white rounded-lg shadow-xl">
-      {/* Chat Header */}
-      <div className="p-4 border-b">
+    <div className="fixed bottom-4 right-4 w-[400px] max-h-[600px] bg-white rounded-xl shadow-xl border overflow-hidden flex flex-col">
+      {/* Header */}
+      <div className="px-4 py-3 bg-blue-600 text-white flex justify-between items-center shrink-0">
         <h3 className="font-semibold">Property Assistant</h3>
+        <button
+          onClick={() => setIsOpen(false)}
+          className="p-1 hover:bg-blue-700 rounded-full"
+        >
+          <X size={18} />
+        </button>
       </div>
 
       {/* Messages */}
-      <div className="h-96 overflow-y-auto p-4">
+      <div className="flex-grow overflow-y-auto p-4 space-y-4 bg-gray-50">
         {messages.map(message => (
-          <div
-            key={message.id}
-            className={`mb-4 ${
-              message.role === 'user' ? 'text-right' : 'text-left'
-            }`}
-          >
+          <div key={message.id} className="space-y-4">
+            {/* Message Bubble */}
             <div
-              className={`inline-block p-3 rounded-lg ${
-                message.role === 'user'
-                  ? 'bg-blue-600 text-white'
-                  : 'bg-gray-100 text-gray-900'
+              className={`flex ${
+                message.role === 'user' ? 'justify-end' : 'justify-start'
               }`}
             >
-              {message.content}
+              <div
+                className={`max-w-[80%] p-3 rounded-2xl ${
+                  message.role === 'user'
+                    ? 'bg-blue-600 text-white'
+                    : 'bg-white shadow-sm'
+                }`}
+              >
+                {message.content}
+              </div>
             </div>
+
+            {/* Property Matches */}
+            {message.matches && message.matches.length > 0 && (
+              <div className="space-y-3">
+                {message.matches.map(match => (
+                  <Link 
+                    href={`/properties/${match.property.id}`}
+                    key={match.property.id}
+                    className="block bg-white rounded-lg p-3 shadow-sm hover:shadow-md transition-shadow"
+                  >
+                    <div className="flex gap-3">
+                      <div className="relative w-20 h-20 shrink-0">
+                        <Image
+                          src={match.property.images[0]}
+                          alt={match.property.title}
+                          fill
+                          className="object-cover rounded-lg"
+                        />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <h4 className="font-semibold text-gray-900">{match.property.title}</h4>
+                        <p className="text-sm text-gray-600">
+                          RM {match.property.price.toLocaleString()}/month
+                        </p>
+                        <p className="text-sm text-gray-600">
+                          {match.property.bedrooms} Beds • {match.property.bathrooms} Baths
+                        </p>
+                        {match.explanation && (
+                          <p className="text-sm text-gray-500 mt-1 line-clamp-2">
+                            {match.explanation}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            )}
           </div>
         ))}
+
+        {/* Loading Indicator */}
         {isLoading && (
-          <div className="text-gray-500 italic">Assistant is typing...</div>
+          <div className="flex justify-start">
+            <div className="bg-white shadow-sm p-3 rounded-2xl">
+              <div className="flex space-x-2">
+                <div className="w-2 h-2 bg-gray-300 rounded-full animate-bounce"></div>
+                <div className="w-2 h-2 bg-gray-300 rounded-full animate-bounce [animation-delay:0.2s]"></div>
+                <div className="w-2 h-2 bg-gray-300 rounded-full animate-bounce [animation-delay:0.4s]"></div>
+              </div>
+            </div>
+          </div>
         )}
-        <div ref={messagesEndRef} />
       </div>
 
       {/* Input */}
-      <div className="p-4 border-t">
+      <div className="p-4 border-t bg-white shrink-0">
         <form
-          onSubmit={e => {
+          onSubmit={(e) => {
             e.preventDefault();
             const input = e.currentTarget.elements.namedItem('message') as HTMLInputElement;
             handleSubmit(input.value);
             input.value = '';
           }}
+          className="flex gap-2"
         >
           <input
             type="text"
             name="message"
-            placeholder="Ask about properties..."
-            className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            placeholder="Type a message..."
+            className="flex-1 p-2 border rounded-lg focus:outline-none focus:ring-1 focus:ring-blue-500"
             disabled={isLoading}
           />
+          <button
+            type="submit"
+            disabled={isLoading}
+            className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50"
+          >
+            Send
+          </button>
         </form>
       </div>
     </div>

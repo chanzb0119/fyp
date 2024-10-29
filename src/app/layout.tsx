@@ -3,6 +3,7 @@ import { ReactNode } from 'react'
 import './globals.css'
 import Script from 'next/script'
 import ChatInterface2 from '@/components/chat/ChatInterface2'
+import ChatInterface from '@/components/chat/ChatInterface'
 
 export default function RootLayout({
   children,
