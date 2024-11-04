@@ -2,8 +2,6 @@ import MainLayout from '@/components/layout/MainLayout'
 import { ReactNode } from 'react'
 import './globals.css'
 import Script from 'next/script'
-import ChatInterface2 from '@/components/chat/ChatInterface2'
-import ChatInterface from '@/components/chat/ChatInterface'
 
 export default function RootLayout({
   children,
@@ -22,7 +20,6 @@ export default function RootLayout({
       <body>
         <MainLayout>
           {children}
-          <ChatInterface2 />
         </MainLayout>
       </body>
     </html>

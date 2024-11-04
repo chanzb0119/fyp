@@ -1,5 +1,8 @@
 import { propertyService } from '@/services/properties';
 import PropertyDetails from '@/components/properties/PropertyDetails';
+import ChatInterface2 from '@/components/chat/ChatInterface2'
+import ChatInterface from '@/components/chat/ChatInterface'
+import { CHAT_INTERFACE } from '@/libs/constant/malaysiaStates'
 
 interface Props {
   params: {
@@ -19,11 +22,16 @@ export default async function PropertyPage({ params }: Props) {
           <p className="mt-2 text-gray-600">
             The property you&apos;re looking for doesn&apos;t exist or has been removed.
           </p>
+          
         </div>
       );
     }
 
-    return <PropertyDetails property={property} />;
+    return (
+      <>
+        <PropertyDetails property={property} />
+        { CHAT_INTERFACE == 1 ? (<><ChatInterface mode={'property_details'} propertyId={id}/></>) : (<><ChatInterface2/></>)}
+      </>);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   } catch (error) {
     return (

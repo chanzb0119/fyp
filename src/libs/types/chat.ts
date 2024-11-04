@@ -3,6 +3,7 @@ import { Property } from "./database";
 // src/types/chat.ts
 export type MessageRole = 'user' | 'assistant';
 export type ChatIntent = 'search' | 'describe' | 'question' | 'match';
+export type ChatMode = 'search' | 'property_details';
 
 export interface PropertySearchParams {
     location?: string;

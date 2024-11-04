@@ -292,3 +292,5 @@ export const stateAndCities: { [key: string]: string[] } = {
 };
 
 export default stateAndCities;
+
+export const CHAT_INTERFACE = 1;

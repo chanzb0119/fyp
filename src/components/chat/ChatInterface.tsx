@@ -1,11 +1,24 @@
 "use client";
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { chatService } from '@/services/chatService';
 import { X, MessageCircle } from 'lucide-react';
 import Image from 'next/image';
 import { Property } from '@/libs/types/database';
 import Link from 'next/link';
+import { ChatMode } from '@/libs/types/chat';
+
+interface ChatInterfaceProps {
+  mode: ChatMode;
+  propertyId?: string;
+}
+
+interface NearbyPlace {
+  name: string;
+  type: string;
+  distance: number;
+  rating?: number;
+}
 
 interface Message {
   id: string;
@@ -14,20 +27,44 @@ interface Message {
   matches?: Array<{
     property: Property;
     matchScore: number;
-    explanation?: string;
   }>;
+  locationInsights?: LocationInsights;
 }
 
-export default function ChatInterface2() {
+interface LocationInsights {
+  nearbyPlaces: {
+    education: NearbyPlace[];
+    food: NearbyPlace[];
+    transport: NearbyPlace[];
+    shopping: NearbyPlace[];
+    healthcare: NearbyPlace[];
+  };
+  areaAnalysis: string;
+  suitableFor: string[];
+}
+
+export default function ChatInterface({ mode, propertyId }: ChatInterfaceProps) {
   const [isOpen, setIsOpen] = useState(false);
-  const [messages, setMessages] = useState<Message[]>([
-    {
-      id: '1',
-      role: 'assistant',
-      content: 'Hi! How can I help you find a property? You can ask me things like "Find an apartment in Kampar under RM500"'
-    }
-  ]);
+  const [messages, setMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+ 
+  useEffect(() => {
+    const initialMessage: Message = mode === 'search' 
+      ? {
+          id: '1',
+          role: 'assistant',
+          content: 'Hi! How can I help you find a property? You can ask me things like "Find an apartment in Kampar under RM500"'
+        }
+      : {
+          id: '1',
+          role: 'assistant',
+          content: 'Hi! I can help you learn more about this property. Feel free to ask about the area, amenities, or any other details!'
+        };
+    
+    setMessages([initialMessage]);
+  }, [mode, propertyId]); // Reset chat when mode or propertyId changes
+
+  
 
   const handleSubmit = async (userInput: string) => {
     if (!userInput.trim()) return;
@@ -41,12 +78,13 @@ export default function ChatInterface2() {
     setIsLoading(true);
 
     try {
-      const response = await chatService.getResponse(userInput);
+      const response = await chatService.getResponse(userInput, mode, propertyId);
       const assistantMessage: Message = {
         id: crypto.randomUUID(),
         role: 'assistant',
         content: response.content,
-        matches: response.matches
+        matches: response.matches,
+        locationInsights: response.locationInsights
       };
       setMessages(prev => [...prev, assistantMessage]);
     } catch (error) {
@@ -128,15 +166,47 @@ export default function ChatInterface2() {
                         <p className="text-sm text-gray-600">
                           {match.property.bedrooms} Beds • {match.property.bathrooms} Baths
                         </p>
-                        {match.explanation && (
-                          <p className="text-sm text-gray-500 mt-1 line-clamp-2">
-                            {match.explanation}
-                          </p>
-                        )}
+                        
                       </div>
                     </div>
                   </Link>
                 ))}
+              </div>
+            )}
+
+            {/* Location Insights */}
+            {message.locationInsights && (
+              <div className="mt-4 bg-white rounded-lg p-4 shadow-sm space-y-4">
+                {/* Area Analysis */}
+                <div className="space-y-2">
+                  <h4 className="font-semibold text-gray-900">Area Analysis</h4>
+                  <p className="text-sm text-gray-600">{message.locationInsights.areaAnalysis}</p>
+                </div>
+                
+                {/* Nearby Places */}
+                <div className="space-y-4">
+                  <h4 className="font-semibold text-gray-900">Nearby Places</h4>
+                  {Object.entries(message.locationInsights.nearbyPlaces).map(([category, places]) => 
+                    places.length > 0 && (
+                      <div key={category} className="space-y-2">
+                        <h5 className="text-sm font-medium text-gray-700 capitalize">{category}</h5>
+                        <ul className="space-y-1">
+                          {places.map((place, index) => (
+                            <li key={index} className="text-sm text-gray-600 flex justify-between">
+                              <span className="flex items-center">
+                                {place.name}
+                                {place.rating && (
+                                  <span className="ml-2 text-yellow-500">★ {place.rating}</span>
+                                )}
+                              </span>
+                              <span>{Math.round(place.distance)}m</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    )
+                  )}
+                </div>
               </div>
             )}
           </div>
