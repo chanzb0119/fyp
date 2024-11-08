@@ -6,15 +6,18 @@ import {
   Bath, 
   Square,
   MapPin,
-  Calendar,
-  Info,
   ChevronLeft,
-  ChevronRight
+  ChevronRight,
+  Car
 } from 'lucide-react';
 import Image from 'next/image';
+import PropertyMap from './PropertyMap';
+import Description from './Description';
 
 interface PropertyDetailsProps {
   property: {
+    latitude: number | undefined;
+    longitude: number | undefined;
     id: string;
     title: string;
     type: string;
@@ -23,13 +26,14 @@ interface PropertyDetailsProps {
     bathrooms: number;
     size: number;
     description: string;
-    addressLine1: string;
-    addressLine2: string;
+    address: string;
     state: string;
     city: string;
     amenities: string[];
     images: string[];
     created_at: string;
+    furnishing: string;
+    carparks: number;
   };
 }
 
@@ -49,9 +53,9 @@ const PropertyDetails = ({ property }: PropertyDetailsProps) => {
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div className="max-w-5xl mx-auto sm:px-6 lg:px-8 ">
       {/* Image Gallery */}
-      <div className="relative aspect-video bg-gray-100 rounded-lg overflow-hidden mb-8">
+      <div className="relative aspect-video bg-gray-100 rounded-2xl overflow-hidden mb-8">
         {property.images.length > 0 ? (
           <>
             <Image
@@ -118,26 +122,30 @@ const PropertyDetails = ({ property }: PropertyDetailsProps) => {
             <div className="flex items-center gap-6 py-4 border-y">
               <div className="flex items-center gap-2">
                 <Bed className="h-5 w-5 text-gray-600" />
-                <span>{property.bedrooms} Bedrooms</span>
+                <span>{property.bedrooms} </span>
               </div>
               <div className="flex items-center gap-2">
                 <Bath className="h-5 w-5 text-gray-600" />
-                <span>{property.bathrooms} Bathrooms</span>
+                <span>{property.bathrooms} </span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Car className="h-5 w-5 text-gray-600" />
+                <span>{property.carparks == 0 ? "-": property.carparks}</span>
               </div>
               <div className="flex items-center gap-2">
                 <Square className="h-5 w-5 text-gray-600" />
                 <span>{property.size} sqft</span>
               </div>
+              <div className="flex items-center gap-2">
+                Furnishing: {property.furnishing == null? "-":property.furnishing}
+              </div>
             </div>
 
             {/* Description */}
-            <div>
-              <h2 className="text-xl font-semibold mb-4">Description</h2>
-              <p className="text-gray-600 whitespace-pre-line">{property.description}</p>
-            </div>
+            <Description text={property.description} />
 
             {/* Amenities */}
-            <div>
+            <div className='py-4 border-y'>
               <h2 className="text-xl font-semibold mb-4">Amenities</h2>
               <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                 {property.amenities.map((amenity) => (
@@ -147,6 +155,16 @@ const PropertyDetails = ({ property }: PropertyDetailsProps) => {
                   </div>
                 ))}
               </div>
+            </div>
+
+            {/* Map section */}
+            <div className="mt-8">
+              <h2 className="text-xl font-semibold mb-4">Location</h2>
+              <PropertyMap
+                address={`${property.address}, ${property.city}, ${property.state}`}
+                latitude={property.latitude}
+                longitude={property.longitude}
+              />
             </div>
           </div>
         </div>
@@ -169,7 +187,7 @@ const PropertyDetails = ({ property }: PropertyDetailsProps) => {
               <div className="flex justify-between">
                 <span className="text-gray-600">Listed Date</span>
                 <span className="font-medium">
-                  {new Date(property.created_at).toLocaleDateString()}
+                  {property.created_at}
                 </span>
               </div>
             </div>

@@ -73,11 +73,16 @@ const SearchHeader = ({
             onChange={(e) => onFilterChange('propertyType', e.target.value)}
             className="border rounded-lg p-2"
           >
-            <option value="">Property Type</option>
+            <option value="">All properties</option>
             <option value="Apartment">Apartment</option>
-            <option value="House">House</option>
-            <option value="Condo">Condo</option>
-            <option value="Townhouse">Townhouse</option>
+            <option value="Condominium">Condominium</option>
+            <option value="1-sty Terrace/Link House">1-sty Terrace/Link House</option>
+            <option value="1.5-sty Terrace/Link House">1.5-sty Terrace/Link House</option>
+            <option value="2-sty Terrace/Link House">2-sty Terrace/Link House</option>
+            <option value="3-sty Terrace/Link House">3-sty Terrace/Link House</option>
+            <option value="Serviced Residence">Serviced Residence</option>
+            <option value="Semi-detached House">Semi-detached House</option>
+            <option value="Bungalow">Bungalow</option>
           </select>
 
           <input

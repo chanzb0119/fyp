@@ -83,7 +83,7 @@ const PropertyCard = ({
           </div>
           <div className="flex items-center gap-1">
             <Car className="w-4 h-4" />
-            <span className="text-sm">{carparks}</span>
+            <span className="text-sm">{carparks == 0? "-" : carparks}</span>
           </div>
           <div className="flex items-center gap-1">
             <Square className="w-4 h-4" />

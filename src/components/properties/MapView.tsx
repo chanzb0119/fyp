@@ -135,7 +135,7 @@ const MapView = ({ searchTerm, filters }: MapViewProps) => {
                   </div>
                 </div>
                 <p className="text-gray-500 text-sm mt-2">
-                  {property.addressLine1}, {property.city}, {property.state}
+                  {property.title}
                 </p>
               </div>
             </div>
@@ -208,7 +208,10 @@ const MapView = ({ searchTerm, filters }: MapViewProps) => {
                   </div>
 
                   <div className="space-y-1">
-                    <h3 className="font-semibold text-lg">
+                    <h3 className="font-bold text-xl">
+                      {selectedProperty.title}
+                    </h3>
+                    <h3 className="font-semibold text-base">
                       RM {selectedProperty.price.toLocaleString()}/month
                     </h3>
                     <div className="flex items-center gap-2 text-gray-600 text-sm">
@@ -218,9 +221,6 @@ const MapView = ({ searchTerm, filters }: MapViewProps) => {
                       <span>•</span>
                       <span className='flex items-center gap-1'>{selectedProperty.size} sqft</span>
                     </div>
-                    <p className="text-gray-600 text-sm">
-                      {selectedProperty.addressLine1}, {selectedProperty.city}, {selectedProperty.state}
-                    </p>
                     <Link
                       href={`/properties/${selectedProperty.id}`}
                       className="inline-block mt-2 px-4 py-2 bg-blue-600 text-white rounded-md text-sm hover:bg-blue-700 transition-colors w-full text-center"
