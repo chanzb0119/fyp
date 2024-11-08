@@ -173,11 +173,11 @@ export class ChatService {
         }));
 
       // Generate response based on results
-      const responsePrompt = `Generate a brief, friendly response about the property search results.
+      const responsePrompt = `Generate a brief response about the property search results.
       User query: "${userMessage}"
       Found ${topMatches.length} matching properties out of ${properties.length} total listings.
       ${topMatches.length === 0 ? 'Suggest refining the search criteria.' : ''}
-      Keep it short and concise.`;
+      Only include information about the search results themselves.`;
 
       const content = await claude.complete(responsePrompt);
 

@@ -8,18 +8,18 @@ export interface Property {
     price: number;
     bedrooms: number;
     bathrooms: number;
+    carparks: number;
     size: number;
     description: string;
-    addressLine1: string;
-    addressLine2: string;
+    address: string;
     state: string;
     city: string;
     amenities: string[];
     user_id: string;
-    status: 'draft' | 'published' | 'archived';
     images: string[];
     latitude: number;
     longitude: number;
+    furnishing: string;
   }
   
   export interface User {

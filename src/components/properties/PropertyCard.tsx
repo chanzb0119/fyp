@@ -1,7 +1,7 @@
 "use client";
 
 import React from 'react';
-import { Bed, Bath, Square, MapPin } from 'lucide-react';
+import { Bed, Bath, Square, MapPin, Car } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useUser } from '@/hooks/useUser';
@@ -12,6 +12,7 @@ interface PropertyCardProps {
   price: number;
   bedrooms: number;
   bathrooms: number;
+  carparks: number;
   size: number;
   state: string;
   city: string;
@@ -26,6 +27,7 @@ const PropertyCard = ({
   price, 
   bedrooms, 
   bathrooms, 
+  carparks,
   size, 
   state,
   city, 
@@ -80,6 +82,10 @@ const PropertyCard = ({
             <span className="text-sm">{bathrooms}</span>
           </div>
           <div className="flex items-center gap-1">
+            <Car className="w-4 h-4" />
+            <span className="text-sm">{carparks}</span>
+          </div>
+          <div className="flex items-center gap-1">
             <Square className="w-4 h-4" />
             <span className="text-sm">{size} sqft</span>
           </div>
@@ -88,7 +94,7 @@ const PropertyCard = ({
         {/* Location */}
         <div className="mt-2 flex items-start gap-1 text-gray-500">
           <MapPin className="w-4 h-4 mt-0.5" />
-          <span className="text-sm truncate">{state + ", " + city}</span>
+          <span className="text-sm truncate">{city + ", " + state}</span>
         </div>
 
         

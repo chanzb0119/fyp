@@ -107,7 +107,7 @@ export default function ChatInterface({ mode, propertyId }: ChatInterfaceProps) 
   }
 
   return (
-    <div className="fixed bottom-4 right-4 w-[400px] max-h-[600px] bg-white rounded-xl shadow-xl border overflow-hidden flex flex-col">
+    <div className="fixed bottom-4 right-4 w-[400px] max-h-[600px] bg-white rounded-xl shadow-xl border overflow-hidden flex flex-col z-30">
       {/* Header */}
       <div className="px-4 py-3 bg-blue-600 text-white flex justify-between items-center shrink-0">
         <h3 className="font-semibold">Property Assistant</h3>

@@ -74,7 +74,8 @@ const GridView: React.FC<GridViewProps> = ({searchTerm, filters}) => {
               city={property.city}
               type={property.type}
               imageUrl={property.images?.[0] || ''} 
-              user_id={property.user_id}            
+              user_id={property.user_id}     
+              carparks={property.carparks}       
               />
           ))}
         </div>

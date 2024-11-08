@@ -1,4 +1,4 @@
-// src/services/locationInsights.ts
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Property } from '@/libs/types/database';
 import { claude } from './claude';
 
@@ -81,11 +81,11 @@ export class LocationInsightService {
 
     // Generate area analysis using Claude
     const analysisPrompt = `Analyze this location based on nearby places:
-    Education: ${insights.nearbyPlaces.education.map(p => `${p.name} (${p.distance}m)`).join(', ')}
-    Food: ${insights.nearbyPlaces.food.map(p => `${p.name} (${p.distance}m)`).join(', ')}
-    Transport: ${insights.nearbyPlaces.transport.map(p => `${p.name} (${p.distance}m)`).join(', ')}
-    Shopping: ${insights.nearbyPlaces.shopping.map(p => `${p.name} (${p.distance}m)`).join(', ')}
-    Healthcare: ${insights.nearbyPlaces.healthcare.map(p => `${p.name} (${p.distance}m)`).join(', ')}
+    Education: ${insights.nearbyPlaces.education.map((p: { name: any; distance: any; }) => `${p.name} (${p.distance}m)`).join(', ')}
+    Food: ${insights.nearbyPlaces.food.map((p: { name: any; distance: any; }) => `${p.name} (${p.distance}m)`).join(', ')}
+    Transport: ${insights.nearbyPlaces.transport.map((p: { name: any; distance: any; }) => `${p.name} (${p.distance}m)`).join(', ')}
+    Shopping: ${insights.nearbyPlaces.shopping.map((p: { name: any; distance: any; }) => `${p.name} (${p.distance}m)`).join(', ')}
+    Healthcare: ${insights.nearbyPlaces.healthcare.map((p: { name: any; distance: any; }) => `${p.name} (${p.distance}m)`).join(', ')}
 
     Property Details:
     - Located in ${property.city}, ${property.state}
