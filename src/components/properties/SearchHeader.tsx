@@ -25,7 +25,7 @@ const SearchHeader = ({
 }: SearchHeaderProps) => {
   return (
     <div className="bg-white sticky top-0 z-10 border-b">
-      <div className="max-w-7xl mx-auto p-4 space-y-4">
+      <div className="max-w-5xl mx-auto p-4 space-y-4">
         {/* Search and View Toggle Row */}
         <div className="flex gap-4 items-center">
           <div className="relative flex-1">

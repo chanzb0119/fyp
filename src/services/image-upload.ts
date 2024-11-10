@@ -1,5 +1,5 @@
-// src/lib/utils/image-upload.ts
-import { supabase } from '../supabase/client';
+
+import { supabase } from '../libs/supabase/client';
 import { v4 as uuidv4 } from 'uuid';
 
 export async function uploadImage(file: File) {

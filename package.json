@@ -21,6 +21,7 @@
     "next": "15.0.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "recharts": "^2.13.3",
     "supabase": "^1.207.8",
     "use-places-autocomplete": "^4.0.1",
     "uuid": "^10.0.0"

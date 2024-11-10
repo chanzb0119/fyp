@@ -3,7 +3,7 @@
 import React, { useState, useCallback } from 'react';
 import { Building2, Home, Info, Upload, X } from 'lucide-react';
 import { propertyService } from '@/services/properties';
-import { uploadImage } from '@/libs/utils/image-upload';
+import { uploadImage } from '@/services/image-upload';
 import { stateAndCities } from '@/libs/constant/malaysiaStates';
 import { useUser } from '@/hooks/useUser';
 import Link from 'next/link';
