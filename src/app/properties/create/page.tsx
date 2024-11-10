@@ -1,4 +1,4 @@
-import PropertyForm from '@/components/properties/PropertyForm';
+import PropertyForm from '@/components/properties/create/PropertyForm';
 
 export default function CreateProperty() {
   return (

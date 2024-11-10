@@ -1,5 +1,5 @@
 import { propertyService } from '@/services/properties';
-import PropertyDetails from '@/components/properties/PropertyDetails';
+import PropertyDetails from '@/components/properties/detail/PropertyDetails';
 import ChatInterface2 from '@/components/chat/ChatInterface2'
 import ChatInterface from '@/components/chat/ChatInterface'
 import { CHAT_INTERFACE } from '@/libs/constant/malaysiaStates'
