@@ -90,7 +90,7 @@ export class LocationInsightService {
     Property Details:
     - Located in ${property.city}, ${property.state}
     - RM${property.price}/month
-    - ${property.bedrooms} bedrooms
+    - ${property.beds} beds
 
     Provide a brief analysis of:
     1. Area convenience

@@ -22,7 +22,7 @@ interface PropertyDetailsProps {
     title: string;
     type: string;
     price: number;
-    bedrooms: number;
+    beds: number;
     bathrooms: number;
     size: number;
     description: string;
@@ -122,7 +122,7 @@ const PropertyDetails = ({ property }: PropertyDetailsProps) => {
             <div className="flex items-center gap-6 py-4 border-y">
               <div className="flex items-center gap-2">
                 <Bed className="h-5 w-5 text-gray-600" />
-                <span>{property.bedrooms} </span>
+                <span>{property.beds} </span>
               </div>
               <div className="flex items-center gap-2">
                 <Bath className="h-5 w-5 text-gray-600" />
@@ -137,7 +137,7 @@ const PropertyDetails = ({ property }: PropertyDetailsProps) => {
                 <span>{property.size} sqft</span>
               </div>
               <div className="flex items-center gap-2">
-                Furnishing: {property.furnishing == null? "-":property.furnishing}
+                Furnishing: {property.furnishing == null? "Not mentioned":property.furnishing}
               </div>
             </div>
 

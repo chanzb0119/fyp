@@ -32,8 +32,8 @@ export default async function PropertyPage({ params }: Props) {
         <PropertyDetails property={property} />
         { CHAT_INTERFACE == 1 ? (<><ChatInterface mode={'property_details'} propertyId={id}/></>) : (<><ChatInterface2/></>)}
       </>);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   } catch (error) {
+    console.error(error);
     return (
       <div className="max-w-7xl mx-auto px-4 py-8 text-center">
         <h1 className="text-2xl font-bold text-gray-900">Error</h1>

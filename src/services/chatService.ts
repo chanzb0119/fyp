@@ -32,7 +32,7 @@ interface SearchQuery {
     min?: number;
     max?: number;
   };
-  bedrooms?: number;
+  beds?: number;
   amenities?: string[];
   propertyType?: string;
 }
@@ -87,7 +87,7 @@ export class ChatService {
     Property details:
     - ${property.title} in ${property.city}
     - RM${property.price}/month
-    - ${property.bedrooms} bedrooms, ${property.bathrooms} bathrooms
+    - ${property.beds} beds, ${property.bathrooms} bathrooms
     - ${property.size} sqft
     - Amenities: ${property.amenities.join(', ')}
 
@@ -105,7 +105,7 @@ export class ChatService {
       const hasEssentialCriteria = 
       (searchCriteria.location?.city || searchCriteria.location?.state) ||
       (searchCriteria.priceRange?.min || searchCriteria.priceRange?.max) ||
-      searchCriteria.bedrooms;
+      searchCriteria.beds;
 
       if (!hasEssentialCriteria) {
         // Generate follow-up question based on what's missing
@@ -114,7 +114,7 @@ export class ChatService {
           missingCriteria.push("location");
         if (!searchCriteria.priceRange?.min && !searchCriteria.priceRange?.max) 
           missingCriteria.push("budget");
-        if (!searchCriteria.bedrooms) 
+        if (!searchCriteria.beds) 
           missingCriteria.push("number of bedrooms");
 
         return {
@@ -140,8 +140,8 @@ export class ChatService {
       if (searchCriteria.priceRange?.max) {
         query = query.lte('price', searchCriteria.priceRange.max);
       }
-      if (searchCriteria.bedrooms) {
-        query = query.eq('bedrooms', searchCriteria.bedrooms);
+      if (searchCriteria.beds) {
+        query = query.eq('beds', searchCriteria.beds);
       }
       if (searchCriteria.propertyType) {
         query = query.ilike('type', `%${searchCriteria.propertyType}%`);
@@ -203,7 +203,7 @@ export class ChatService {
         "min": number,
         "max": number
       },
-      "bedrooms": number,
+      "beds": number,
       "amenities": string[],
       "propertyType": string
     }

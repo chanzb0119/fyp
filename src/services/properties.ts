@@ -5,7 +5,7 @@ import { Property } from '@/libs/types/database';
 
 export const propertyService = {
   
-  async createProperty(property: Omit<Property, 'id' | 'created_at'>) {
+  async createProperty(property: Omit<Property, 'id'>) {
     const { data, error } = await supabase
       .from('properties')
       .insert(property)

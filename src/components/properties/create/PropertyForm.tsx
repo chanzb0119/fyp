@@ -1,6 +1,8 @@
-"use client";  // Add this at the very top of the file
+//src\components\properties\create\PropertyForm.tsx
 
-import React, { useState, useCallback } from 'react';
+"use client";  
+
+import React, { useState, useCallback, useEffect } from 'react';
 import { Building2, Home, Info, Upload, X } from 'lucide-react';
 import { propertyService } from '@/services/properties';
 import { uploadImage } from '@/services/image-upload';
@@ -10,44 +12,46 @@ import Link from 'next/link';
 import AddressAutocomplete from './AddressAutocomplete';
 
 interface PropertyFormData {
-    title: string;
-    type: string;
-    price: string;
-    bedrooms: string;
-    bathrooms: string;
-    size: string;
-    description: string;
-    addressLine1: string;
-    addressLine2: string;
-    state: string;
-    city: string;
-    latitude: number;
-    longitude: number;
-    amenities: string[];
-    images: File[];
+  title: string;
+  type: string;
+  price: string;
+  beds: string;
+  bathrooms: string;
+  carparks: string;
+  size: string;
+  description: string;
+  address: string;
+  state: string;
+  city: string;
+  amenities: string[];
+  images: string[];
+  latitude: number;
+  longitude: number;
+  furnishing: string;
 }
 
 const PropertyForm = () => {
   const { user } = useUser()
-
   const [formData, setFormData] = useState<PropertyFormData>({
       title: '',
       type: '',
       price: '',
-      bedrooms: '',
+      beds: '',
       bathrooms: '',
       size: '',
       description: '',
-      addressLine1: '',
-      addressLine2: '',
+      address: '',
       state: '',
       city: '',
       amenities: [],
       images: [],
       latitude: 0,
       longitude: 0,
+      furnishing: '',
+      carparks: ''
     });
       
+  const [imageFiles, setImageFiles] = useState<File[]>([]);
   const [previews, setPreviews] = useState<string[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -55,11 +59,14 @@ const PropertyForm = () => {
 
   const propertyTypes: string[] = [
     'Apartment',
-    'House',
-    'Condo',
-    'Townhouse',
-    'Studio',
-    'Room',
+    'Condominium',
+    '1-sty Terrace/Link House',
+    '1.5-sty Terrace/Link House',
+    '2-sty Terrace/Link House',
+    '3-sty Terrace/Link House',
+    'Serviced Residence',
+    'Semi-detached House',
+    'Bungalow',
   ];
 
   const amenitiesList: string[] = [
@@ -74,6 +81,15 @@ const PropertyForm = () => {
   ];
 
   const states = Object.keys(stateAndCities)
+
+  const getFormattedDate = ():string => {
+    const today = new Date();
+    const yyyy = today.getFullYear();
+    const mm = String(today.getMonth() + 1).padStart(2, '0'); // Months are 0-based
+    const dd = String(today.getDate()).padStart(2, '0');
+    
+    return `${yyyy}-${mm}-${dd}`;
+  };
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
@@ -98,10 +114,8 @@ const PropertyForm = () => {
   const handleImageChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || []);
     if (files.length > 0) {
-      setFormData(prev => ({
-        ...prev,
-        images: [...prev.images, ...files]
-      }));
+      // Store the File objects separately
+      setImageFiles(prev => [...prev, ...files]);
 
       // Create preview URLs
       const newPreviews = files.map(file => URL.createObjectURL(file));
@@ -110,10 +124,7 @@ const PropertyForm = () => {
   }, []);
 
   const removeImage = useCallback((index: number) => {
-    setFormData(prev => ({
-      ...prev,
-      images: prev.images.filter((_, i) => i !== index)
-    }));
+    setImageFiles(prev => prev.filter((_, i) => i !== index));
     setPreviews(prev => prev.filter((_, i) => i !== index));
   }, []);
 
@@ -132,30 +143,31 @@ const PropertyForm = () => {
     try {
       // Upload images first
       const uploadedUrls = [];
-      for (let i = 0; i < formData.images.length; i++) {
-        const url = await uploadImage(formData.images[i]);
+      for (let i = 0; i < imageFiles.length; i++) {
+        const url = await uploadImage(imageFiles[i]);
         uploadedUrls.push(url);
-        setUploadProgress(((i + 1) / formData.images.length) * 100);
+        setUploadProgress(((i + 1) / imageFiles.length) * 100);
       }
 
       const propertyData = {
         title: formData.title,
         type: formData.type,
         price: parseFloat(formData.price),
-        bedrooms: parseInt(formData.bedrooms),
+        beds: parseInt(formData.beds),
         bathrooms: parseInt(formData.bathrooms),
+        carparks: parseInt(formData.carparks),
         size: parseFloat(formData.size),
         description: formData.description,
-        addressLine1: formData.addressLine1,
-        addressLine2: formData.addressLine2,
+        address: formData.address,
         state: formData.state,
         city: formData.city,
         amenities: formData.amenities,
         user_id: user.id,
-        status: 'published' as const,
         images: uploadedUrls,
         latitude: formData.latitude,
-        longitude: formData.longitude
+        longitude: formData.longitude,
+        furnishing: formData.furnishing,
+        created_at: getFormattedDate()
       };
 
       await propertyService.createProperty(propertyData);
@@ -165,20 +177,22 @@ const PropertyForm = () => {
         title: '',
         type: '',
         price: '',
-        bedrooms: '',
+        beds: '',
         bathrooms: '',
+        carparks: '',
         size: '',
         description: '',
-        addressLine1: '',
-        addressLine2: '',
+        address: '',
         state: '',
         city: '',
         amenities: [],
         images: [],
+        latitude: 0,
         longitude: 0,
-        latitude: 0
+        furnishing: '',
       });
-      setPreviews([]);
+      setImageFiles([]); // Reset image files
+      setPreviews([]);   // Reset previews
       setUploadProgress(0);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred');
@@ -186,6 +200,13 @@ const PropertyForm = () => {
       setIsSubmitting(false);
     }
   };
+
+  // Clean up preview URLs when component unmounts
+  useEffect(() => {
+    return () => {
+      previews.forEach(preview => URL.revokeObjectURL(preview));
+    };
+  }, [previews]);
 
   if (!user) {
     return (
@@ -268,12 +289,12 @@ const PropertyForm = () => {
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700">
-                Bedrooms
+                Beds
               </label>
               <input
                 type="number"
-                name="bedrooms"
-                value={formData.bedrooms}
+                name="beds"
+                value={formData.beds}
                 onChange={handleInputChange}
                 className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2"
                 required
@@ -305,6 +326,39 @@ const PropertyForm = () => {
                 required
               />
             </div>
+             {/* Furnishing Status */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700">
+                  Furnishing Status
+                </label>
+                <select
+                  name="furnishing"
+                  value={formData.furnishing}
+                  onChange={handleInputChange}
+                  className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2"
+                  required
+                >
+                  <option value="">Select furnishing status</option>
+                  <option value="Fully Furnished">Fully Furnished</option>
+                  <option value="Partially Furnished">Partially Furnished</option>
+                  <option value="Unfurnished">Unfurnished</option>
+                </select>
+              </div>
+
+              {/* Carparks */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700">
+                  Carparks
+                </label>
+                <input
+                  type="number"
+                  name="carparks"
+                  value={formData.carparks}
+                  onChange={handleInputChange}
+                  className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2"
+                  required
+                />
+              </div>
           </div>
         </div>
 
@@ -323,8 +377,7 @@ const PropertyForm = () => {
             <AddressAutocomplete onSelect={(details) => {
               setFormData(prev => ({
                 ...prev,
-                addressLine1: details.addressLine1,
-                addressLine2: details.addressLine2,
+                address: details.address,
                 state: details.state,
                 city: details.city,
                 latitude: details.latitude,
@@ -340,24 +393,11 @@ const PropertyForm = () => {
   
           <div className="mt-4">
             <label className="block text-sm font-medium text-gray-700">
-              Address Line 1
+              Address
             </label>
             <input
               name="addressLine1"
-              value={formData.addressLine1}
-              onChange={handleInputChange}
-              className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2"
-              required
-            />
-          </div>
-
-          <div className="mt-4">
-            <label className="block text-sm font-medium text-gray-700">
-              Address Line 2
-            </label>
-            <input
-              name="addressLine2"
-              value={formData.addressLine2}
+              value={formData.address}
               onChange={handleInputChange}
               className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2"
               required

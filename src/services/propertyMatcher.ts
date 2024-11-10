@@ -12,7 +12,7 @@ interface PropertyPreferences {
     min?: number;
     max?: number;
   };
-  bedrooms?: number;
+  beds?: number;
   bathrooms?: number;
   propertyType?: string;
   amenities?: string[];
@@ -87,9 +87,9 @@ export class PropertyMatcher {
     }
 
     // Bedrooms match
-    if (preferences.bedrooms !== undefined) {
+    if (preferences.beds !== undefined) {
       criteriaCount++;
-      if (property.bedrooms === preferences.bedrooms) {
+      if (property.beds === preferences.beds) {
         score += 1;
       }
     }
@@ -139,7 +139,7 @@ export class PropertyMatcher {
     Property:
     - ${property.title} in ${property.city}
     - RM${property.price} per month
-    - ${property.bedrooms} bedrooms, ${property.bathrooms} bathrooms
+    - ${property.beds} beds, ${property.bathrooms} bathrooms
     - ${property.size} sqft
     - Amenities: ${property.amenities.join(', ')}
     

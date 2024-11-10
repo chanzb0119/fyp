@@ -21,7 +21,7 @@ export default function Filters({ properties, filters, onChange, onReset }: Filt
   // Get unique values for filters
   const uniqueTypes = Array.from(new Set(properties.map(p => p.type)));
   const uniqueStates = Array.from(new Set(properties.map(p => p.state)));
-  const uniqueBedrooms = Array.from(new Set(properties.map(p => p.bedrooms))).sort((a, b) => (a ?? 0) - (b ?? 0));
+  const uniqueBeds = Array.from(new Set(properties.map(p => p.beds))).sort((a, b) => (a ?? 0) - (b ?? 0));
   const uniqueFurnishing = Array.from(new Set(properties.map(p => {
     if (!p.furnishing || p.furnishing.trim() === '') {
       return 'Not mentioned';
@@ -168,19 +168,19 @@ export default function Filters({ properties, filters, onChange, onReset }: Filt
               </div>
             </div>
 
-            {/* Bedrooms Filter */}
+            {/* Beds Filter */}
             <div className="bg-gray-50 p-4 rounded-lg">
               <h4 className="font-semibold text-gray-700 mb-3">Bedrooms</h4>
               <div className="space-y-2 max-h-32 overflow-y-auto custom-scrollbar">
-                {uniqueBedrooms.map(count => count !== undefined && (
+                {uniqueBeds.map(count => count !== undefined && (
                   <label key={count} className="flex items-center space-x-3 hover:bg-gray-100 p-2 rounded-md transition-colors cursor-pointer">
                     <input
                       type="checkbox"
-                      checked={filters.bedrooms.includes(count)}
-                      onChange={() => handleCheckboxChange('bedrooms', count)}
+                      checked={filters.beds.includes(count)}
+                      onChange={() => handleCheckboxChange('beds', count)}
                       className="w-4 h-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
                     />
-                    <span className="text-sm text-gray-600">{count} Bedrooms</span>
+                    <span className="text-sm text-gray-600">{count} Beds</span>
                   </label>
                 ))}
               </div>

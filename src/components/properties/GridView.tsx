@@ -11,7 +11,7 @@ interface GridViewProps {
     propertyType: string;
     minPrice: string;
     maxPrice: string;
-    bedrooms: string;
+    beds: string;
   };
 }
 
@@ -44,7 +44,7 @@ const GridView: React.FC<GridViewProps> = ({searchTerm, filters}) => {
     const matchesPrice = (!filters.minPrice || property.price >= parseFloat(filters.minPrice)) &&
                         (!filters.maxPrice || property.price <= parseFloat(filters.maxPrice));
     
-    const matchesBedrooms = !filters.bedrooms || property.bedrooms === parseInt(filters.bedrooms);
+    const matchesBedrooms = !filters.beds || property.beds === parseInt(filters.beds);
     
     const matchesType = !filters.propertyType || property.type === filters.propertyType;
 
@@ -67,7 +67,7 @@ const GridView: React.FC<GridViewProps> = ({searchTerm, filters}) => {
               id={property.id}
               title={property.title}
               price={property.price}
-              bedrooms={property.bedrooms}
+              bedrooms={property.beds}
               bathrooms={property.bathrooms}
               size={property.size}
               state={property.state}

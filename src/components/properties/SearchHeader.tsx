@@ -8,7 +8,7 @@ interface SearchHeaderProps {
     propertyType: string;
     minPrice: string;
     maxPrice: string;
-    bedrooms: string;
+    beds: string;
   };
   onFilterChange: (key: string, value: string) => void;
   viewMode: 'grid' | 'map';
@@ -102,7 +102,7 @@ const SearchHeader = ({
           />
 
           <select
-            value={filters.bedrooms}
+            value={filters.beds}
             onChange={(e) => onFilterChange('bedrooms', e.target.value)}
             className="border rounded-lg p-2"
           >

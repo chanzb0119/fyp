@@ -18,7 +18,7 @@ const [filters, setFilters] = useState<FilterState>({
     min: 0,
     max: 999999999
     },
-    bedrooms: [],
+    beds: [],
     furnishing: []
 });
 
@@ -71,7 +71,7 @@ const filteredProperties = useMemo(() => {
     }
 
     // Filter by bedrooms
-    if (filters.bedrooms.length > 0 && !filters.bedrooms.includes(property.bedrooms ?? 0)) {
+    if (filters.beds.length > 0 && !filters.beds.includes(property.beds ?? 0)) {
         return false;
     }
 
@@ -101,7 +101,7 @@ const resetFilters = () => {
         min: minPrice,
         max: maxPrice
     },
-    bedrooms: [],
+    beds: [],
     furnishing: []
     });
 };

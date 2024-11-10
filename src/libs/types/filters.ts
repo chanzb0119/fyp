@@ -6,6 +6,6 @@ export interface FilterState {
       min: number;
       max: number;
     };
-    bedrooms: number[];
+    beds: number[];
     furnishing: string[];
 }

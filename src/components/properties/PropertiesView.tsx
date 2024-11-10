@@ -15,7 +15,7 @@ const PropertiesView = () => {
         propertyType: '',
         minPrice: '',
         maxPrice: '',
-        bedrooms: ''
+        beds: ''
     });
 
     const handleFilterChange = (key: string, value: string) => {

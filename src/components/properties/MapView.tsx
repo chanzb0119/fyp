@@ -14,7 +14,7 @@ interface MapViewProps {
     propertyType: string;
     minPrice: string;
     maxPrice: string;
-    bedrooms: string;
+    beds: string;
   };
 }
 
@@ -56,7 +56,7 @@ const MapView = ({ searchTerm, filters }: MapViewProps) => {
     const matchesPrice = (!filters.minPrice || property.price >= parseFloat(filters.minPrice)) &&
                         (!filters.maxPrice || property.price <= parseFloat(filters.maxPrice));
     
-    const matchesBedrooms = !filters.bedrooms || property.bedrooms === parseInt(filters.bedrooms);
+    const matchesBedrooms = !filters.beds || property.beds === parseInt(filters.beds);
     
     const matchesType = !filters.propertyType || property.type === filters.propertyType;
 
@@ -130,7 +130,7 @@ const MapView = ({ searchTerm, filters }: MapViewProps) => {
                   <div>
                     <h3 className="text-lg font-semibold">RM {property.price.toLocaleString()}/month</h3>
                     <p className="text-gray-600">
-                      {property.bedrooms} Beds • {property.bathrooms} Baths • {property.size} sqft
+                      {property.beds} Beds • {property.bathrooms} Baths • {property.size} sqft
                     </p>
                   </div>
                 </div>
@@ -215,7 +215,7 @@ const MapView = ({ searchTerm, filters }: MapViewProps) => {
                       RM {selectedProperty.price.toLocaleString()}/month
                     </h3>
                     <div className="flex items-center gap-2 text-gray-600 text-sm">
-                      <span className='flex items-center gap-1'>{selectedProperty.bedrooms} <Bed/></span>
+                      <span className='flex items-center gap-1'>{selectedProperty.beds} <Bed/></span>
                       <span>•</span>
                       <span className='flex items-center gap-1'>{selectedProperty.bathrooms} <Bath/></span>
                       <span>•</span>

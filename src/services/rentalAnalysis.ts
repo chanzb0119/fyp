@@ -77,10 +77,10 @@ export const analyzeRentalData = (properties: Property[]) => {
   }>>);
 
   // Rest of the analysis remains the same
-  const roomAnalysis = Array.from(new Set(properties.map(p => p.bedrooms)))
+  const roomAnalysis = Array.from(new Set(properties.map(p => p.beds)))
     .sort((a, b) => a - b)
     .map(roomCount => {
-      const props = properties.filter(p => p.bedrooms === roomCount);
+      const props = properties.filter(p => p.beds === roomCount);
       const prices = props.map(p => p.price);
       return {
         rooms: roomCount,

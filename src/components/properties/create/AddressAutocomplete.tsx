@@ -1,6 +1,3 @@
-// src/components/properties/AddressAutocomplete.tsx
-"use client";
-
 import usePlacesAutocomplete, {
   getGeocode,
   getLatLng,
@@ -9,13 +6,11 @@ import { Combobox } from '@headlessui/react';
 import { MapPin } from 'lucide-react';
 
 interface AddressDetails {
-  addressLine1: string;
-  addressLine2: string;
+  address: string;
   state: string;
   city: string;
   latitude: number;
   longitude: number;
-  fullAddress: string;
 }
 
 interface AddressAutocompleteProps {
@@ -47,25 +42,18 @@ const AddressAutocomplete = ({ onSelect }: AddressAutocompleteProps) => {
       // Parse address components
       const addressComponents = results[0].address_components;
       const addressDetails: AddressDetails = {
-        addressLine1: '',
-        addressLine2: '',
+        address: address,
         state: '',
         city: '',
         latitude: lat,
-        longitude: lng,
-        fullAddress: address
+        longitude: lng
       };
 
       // Map address components to your structure
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       addressComponents.forEach((component: any) => {
         const types = component.types;
 
-        if (types.includes('street_number') || types.includes('route')) {
-          addressDetails.addressLine1 += component.long_name + ' ';
-        }
-        if (types.includes('sublocality') || types.includes('neighborhood')) {
-          addressDetails.addressLine2 += component.long_name + ' ';
-        }
         if (types.includes('administrative_area_level_1')) {
           addressDetails.state = component.long_name;
         }
@@ -73,10 +61,6 @@ const AddressAutocomplete = ({ onSelect }: AddressAutocompleteProps) => {
           addressDetails.city = component.long_name;
         }
       });
-
-      // Clean up the strings
-      addressDetails.addressLine1 = addressDetails.addressLine1.trim();
-      addressDetails.addressLine2 = addressDetails.addressLine2.trim();
 
       onSelect(addressDetails);
     } catch (error) {

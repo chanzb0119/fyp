@@ -1,3 +1,5 @@
+// src\app\properties\create\page.tsx
+
 import PropertyForm from '@/components/properties/create/PropertyForm';
 
 export default function CreateProperty() {

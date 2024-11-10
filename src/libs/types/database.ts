@@ -6,7 +6,7 @@ export interface Property {
     title: string;
     type: string;
     price: number;
-    bedrooms: number;
+    beds: number;
     bathrooms: number;
     carparks: number;
     size: number;
