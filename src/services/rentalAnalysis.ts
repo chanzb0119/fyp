@@ -93,7 +93,8 @@ export const analyzeRentalData = (properties: Property[]) => {
   const furnishingAnalysis = {
     furnished: analyzeByFurnishing(properties, 'Fully furnished'),
     partiallyFurnished: analyzeByFurnishing(properties, 'Partly furnished'),
-    unfurnished: analyzeByFurnishing(properties, 'Unfurnished')
+    unfurnished: analyzeByFurnishing(properties, 'Unfurnished'),
+    notMentioned: analyzeByFurnishing(properties, 'Not mentioned')
   };
 
   return {
@@ -125,7 +126,16 @@ const calculatePercentile = (numbers: number[], percentile: number): number => {
 };
 
 const analyzeByFurnishing = (properties: Property[], furnishingType: string) => {
-  const props = properties.filter(p => p.furnishing === furnishingType);
+  const props = properties.filter(p => {
+    if(furnishingType === 'Not mentioned'){
+        if(p.furnishing === null || p.furnishing === ''){
+            return true;
+        }else{
+            return false;
+        }
+    }
+    return p.furnishing === furnishingType
+});
   const prices = props.map(p => p.price);
   return {
     count: props.length,

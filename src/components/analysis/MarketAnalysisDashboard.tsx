@@ -100,7 +100,7 @@ export default function MarketAnalysisDashboard({ properties }: MarketAnalysisDa
       </div>
 
       {/* Furnishing Analysis */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-3 mb-8">
         {Object.entries(analysis.furnishingAnalysis).map(([type, data]) => (
           <div key={type} className="bg-white rounded-lg shadow p-6">
             <h3 className="text-lg font-semibold text-gray-900 mb-2 capitalize">

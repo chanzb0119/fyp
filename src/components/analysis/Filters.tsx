@@ -22,6 +22,12 @@ export default function Filters({ properties, filters, onChange, onReset }: Filt
   const uniqueTypes = Array.from(new Set(properties.map(p => p.type)));
   const uniqueStates = Array.from(new Set(properties.map(p => p.state)));
   const uniqueBedrooms = Array.from(new Set(properties.map(p => p.bedrooms))).sort((a, b) => (a ?? 0) - (b ?? 0));
+  const uniqueFurnishing = Array.from(new Set(properties.map(p => {
+    if (!p.furnishing || p.furnishing.trim() === '') {
+      return 'Not mentioned';
+    }
+    return p.furnishing;
+  })));
   
   // Get cities based on selected states
   const availableCities = useMemo(() => {
@@ -34,17 +40,9 @@ export default function Filters({ properties, filters, onChange, onReset }: Filt
   }, [properties, filters.states]);
   
   // Calculate active filters count
-  const activeFiltersCount = Object.entries(filters).reduce((count, [key, value]) => {
-    if (key === 'priceRange') {
-      return count + (value.min > 0 || value.max < 999999999 ? 1 : 0);
-    }
+  const activeFiltersCount = Object.entries(filters).reduce((count, [, value]) => {
     return count + ((Array.isArray(value) && value.length > 0) ? 1 : 0);
   }, 0);
-
-  // Calculate price range
-  const prices = properties.map(p => p.price);
-  const minPrice = Math.min(...prices);
-  const maxPrice = Math.max(...prices);
 
   const handleCheckboxChange = useCallback((filterType: keyof Omit<FilterState, 'priceRange'>, value: FilterValue) => {
     if (filterType === 'states') {
@@ -65,12 +63,6 @@ export default function Filters({ properties, filters, onChange, onReset }: Filt
     }
   }, [filters, onChange]);
 
-  const handlePriceChange = useCallback((min: number, max: number) => {
-    onChange({
-      ...filters,
-      priceRange: { min, max }
-    });
-  }, [filters, onChange]);
 
   return (
     <div className="sticky top-0 z-50 bg-white shadow-lg transition-all duration-300">
@@ -158,32 +150,21 @@ export default function Filters({ properties, filters, onChange, onReset }: Filt
               )}
             </div>
 
-            {/* Price Range Filter */}
+            {/* Furnishing Filter */}
             <div className="bg-gray-50 p-4 rounded-lg">
-              <h4 className="font-semibold text-gray-700 mb-3">Price Range</h4>
-              <div className="space-y-4">
-                <div>
-                  <label className="block text-sm text-gray-600 mb-1">Min Price (RM)</label>
-                  <input
-                    type="number"
-                    value={filters.priceRange.min}
-                    onChange={(e) => handlePriceChange(Number(e.target.value), filters.priceRange.max)}
-                    min={minPrice}
-                    max={maxPrice}
-                    className="w-full px-3 py-2 rounded-md border border-gray-300 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 text-sm"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm text-gray-600 mb-1">Max Price (RM)</label>
-                  <input
-                    type="number"
-                    value={filters.priceRange.max}
-                    onChange={(e) => handlePriceChange(filters.priceRange.min, Number(e.target.value))}
-                    min={minPrice}
-                    max={maxPrice}
-                    className="w-full px-3 py-2 rounded-md border border-gray-300 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 text-sm"
-                  />
-                </div>
+              <h4 className="font-semibold text-gray-700 mb-3">Furnishing</h4>
+              <div className="space-y-2 max-h-32 overflow-y-auto custom-scrollbar">
+                {uniqueFurnishing.map(furnishing => (
+                  <label key={furnishing} className="flex items-center space-x-3 hover:bg-gray-100 p-2 rounded-md transition-colors cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={filters.furnishing.includes(furnishing)}
+                      onChange={() => handleCheckboxChange('furnishing', furnishing)}
+                      className="w-4 h-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                    />
+                    <span className="text-sm text-gray-600">{furnishing}</span>
+                  </label>
+                ))}
               </div>
             </div>
 

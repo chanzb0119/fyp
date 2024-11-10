@@ -76,8 +76,12 @@ const filteredProperties = useMemo(() => {
     }
 
     // Filter by furnishing
-    if (filters.furnishing.length > 0 && !filters.furnishing.includes(property.furnishing ?? '')) {
-        return false;
+    if (filters.furnishing.length > 0) {
+        const propertyFurnishing = property.furnishing || 'Not mentioned';
+
+        if (!filters.furnishing.includes(propertyFurnishing)) {
+          return false;
+        }
     }
 
     return true;
