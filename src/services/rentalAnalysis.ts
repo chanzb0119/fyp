@@ -18,96 +18,72 @@ export const analyzeRentalData = (properties: Property[]) => {
     return acc;
   }, {} as Record<string, Property[]>);
 
-  // Calculate metrics for each property type
+  // Calculate price per bed and price per size metrics
+  const pricePerMetrics = properties.map(p => ({
+    id: p.id,
+    pricePerBed: p.beds ? p.price / p.beds : null,
+    pricePerSqft: p.size ? p.price / p.size : null,
+    type: p.type,
+    state: p.state,
+    beds: p.beds,
+    size: p.size
+  }));
+
+  // Calculate averages by property type
   const typeAnalysis = Object.entries(groupByType).map(([type, props]) => {
     const prices = props.map(p => p.price);
+    const pricePerBedValues = props
+      .filter(p => p.beds && p.beds > 0)
+      .map(p => p.price / p.beds);
+    const pricePerSqftValues = props
+      .filter(p => p.size && p.size > 0)
+      .map(p => p.price / p.size);
+
     return {
       type,
       count: props.length,
       medianPrice: calculateMedian(prices),
       averagePrice: calculateMean(prices),
-      minPrice: Math.min(...prices),
-      maxPrice: Math.max(...prices),
-      priceRange: Math.max(...prices) - Math.min(...prices),
-      percentile25: calculatePercentile(prices, 25),
-      percentile75: calculatePercentile(prices, 75)
+      averagePricePerBed: pricePerBedValues.length ? calculateMean(pricePerBedValues) : null,
+      averagePricePerSqft: pricePerSqftValues.length ? calculateMean(pricePerSqftValues) : null
     };
   });
 
-  // Calculate metrics for each state
+  // Calculate state-level metrics
   const stateAnalysis = Object.entries(groupByState).map(([state, props]) => {
     const prices = props.map(p => p.price);
+    const pricePerBedValues = props
+      .filter(p => p.beds && p.beds > 0)
+      .map(p => p.price / p.beds);
+    const pricePerSqftValues = props
+      .filter(p => p.size && p.size > 0)
+      .map(p => p.price / p.size);
+
     return {
       state,
       count: props.length,
       medianPrice: calculateMedian(prices),
       averagePrice: calculateMean(prices),
-      priceRange: Math.max(...prices) - Math.min(...prices)
+      averagePricePerBed: pricePerBedValues.length ? calculateMean(pricePerBedValues) : null,
+      averagePricePerSqft: pricePerSqftValues.length ? calculateMean(pricePerSqftValues) : null
     };
-  }).sort((a, b) => b.count - a.count); // Sort by number of listings
+  }).sort((a, b) => b.count - a.count);
 
-  // Calculate metrics for each city within a state
-  const cityAnalysisByState = Object.entries(groupByState).reduce((acc, [state, stateProps]) => {
-    const groupByCity = stateProps.reduce((cityAcc, property) => {
-      if (property.city) {
-        cityAcc[property.city] = cityAcc[property.city] || [];
-        cityAcc[property.city].push(property);
-      }
-      return cityAcc;
-    }, {} as Record<string, Property[]>);
-
-    acc[state] = Object.entries(groupByCity).map(([city, props]) => {
-      const prices = props.map(p => p.price);
-      return {
-        city,
-        count: props.length,
-        medianPrice: calculateMedian(prices),
-        averagePrice: calculateMean(prices),
-        priceRange: Math.max(...prices) - Math.min(...prices)
-      };
-    }).sort((a, b) => b.count - a.count); // Sort by number of listings
-
-    return acc;
-  }, {} as Record<string, Array<{
-    city: string;
-    count: number;
-    medianPrice: number;
-    averagePrice: number;
-    priceRange: number;
-  }>>);
-
-  // Rest of the analysis remains the same
-  const roomAnalysis = Array.from(new Set(properties.map(p => p.beds)))
-    .sort((a, b) => a - b)
-    .map(roomCount => {
-      const props = properties.filter(p => p.beds === roomCount);
-      const prices = props.map(p => p.price);
-      return {
-        rooms: roomCount,
-        count: props.length,
-        averagePrice: calculateMean(prices),
-        medianPrice: calculateMedian(prices)
-      };
-    });
-
-  const furnishingAnalysis = {
-    furnished: analyzeByFurnishing(properties, 'Fully furnished'),
-    partiallyFurnished: analyzeByFurnishing(properties, 'Partly furnished'),
-    unfurnished: analyzeByFurnishing(properties, 'Unfurnished'),
-    notMentioned: analyzeByFurnishing(properties, 'Not mentioned')
-  };
 
   return {
     typeAnalysis,
     stateAnalysis,
-    cityAnalysisByState,
-    roomAnalysis,
-    furnishingAnalysis,
-    totalListings: properties.length
+    totalListings: properties.length,
+    averagePricePerBed: calculateMean(pricePerMetrics
+      .filter(p => p.pricePerBed !== null)
+      .map(p => p.pricePerBed!)),
+    averagePricePerSqft: calculateMean(pricePerMetrics
+      .filter(p => p.pricePerSqft !== null)
+      .map(p => p.pricePerSqft!))
   };
 };
 
-// Helper functions remain the same
+// Helper functions
 const calculateMedian = (numbers: number[]): number => {
   const sorted = [...numbers].sort((a, b) => a - b);
   const middle = Math.floor(sorted.length / 2);
@@ -117,29 +93,4 @@ const calculateMedian = (numbers: number[]): number => {
 };
 
 const calculateMean = (numbers: number[]): number => 
-  numbers.reduce((acc, val) => acc + val, 0) / numbers.length;
-
-const calculatePercentile = (numbers: number[], percentile: number): number => {
-  const sorted = [...numbers].sort((a, b) => a - b);
-  const index = Math.ceil((percentile / 100) * sorted.length) - 1;
-  return sorted[index];
-};
-
-const analyzeByFurnishing = (properties: Property[], furnishingType: string) => {
-  const props = properties.filter(p => {
-    if(furnishingType === 'Not mentioned'){
-        if(p.furnishing === null || p.furnishing === ''){
-            return true;
-        }else{
-            return false;
-        }
-    }
-    return p.furnishing === furnishingType
-});
-  const prices = props.map(p => p.price);
-  return {
-    count: props.length,
-    averagePrice: prices.length ? calculateMean(prices) : 0,
-    medianPrice: prices.length ? calculateMedian(prices) : 0
-  };
-};
+  numbers.length > 0 ? numbers.reduce((acc, val) => acc + val, 0) / numbers.length : 0;

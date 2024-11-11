@@ -164,7 +164,7 @@ export default function ChatInterface({ mode, propertyId }: ChatInterfaceProps) 
                           RM {match.property.price.toLocaleString()}/month
                         </p>
                         <p className="text-sm text-gray-600">
-                          {match.property.bedrooms} Beds • {match.property.bathrooms} Baths
+                          {match.property.beds} Beds • {match.property.bathrooms} Baths
                         </p>
                         
                       </div>

@@ -1,7 +1,7 @@
 "use client";
 
 import React from 'react';
-import { Bed, Bath, Square, MapPin, Car } from 'lucide-react';
+import { Bed, Bath, Square, MapPin, Car, Calendar } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useUser } from '@/hooks/useUser';
@@ -19,6 +19,7 @@ interface PropertyCardProps {
   type: string;
   imageUrl: string;
   user_id: string;
+  created_at: string;
 }
 
 const PropertyCard = ({ 
@@ -33,7 +34,8 @@ const PropertyCard = ({
   city, 
   type,
   imageUrl,
-  user_id
+  user_id,
+  created_at
 }: PropertyCardProps) => {
   const { user } = useUser();
 
@@ -69,6 +71,12 @@ const PropertyCard = ({
             RM {price.toLocaleString()}
           </span>
           <span className="text-gray-500 text-sm">/month</span>
+        </div>
+
+        {/* Listed date */}
+        <div className="mt-1 items-center text-gray-800 flex gap-1">
+          <Calendar className="w-3 h-3" />
+          <span className="text-sm">Listed Date: {created_at}</span>
         </div>
 
         {/* Features */}

@@ -83,6 +83,7 @@ const SearchHeader = ({
             <option value="Serviced Residence">Serviced Residence</option>
             <option value="Semi-detached House">Semi-detached House</option>
             <option value="Bungalow">Bungalow</option>
+            <option value="Townhouse">Townhouse</option>
           </select>
 
           <input
@@ -103,10 +104,10 @@ const SearchHeader = ({
 
           <select
             value={filters.beds}
-            onChange={(e) => onFilterChange('bedrooms', e.target.value)}
+            onChange={(e) => onFilterChange('beds', e.target.value)}
             className="border rounded-lg p-2"
           >
-            <option value="">Bedrooms</option>
+            <option value="">Beds</option>
             <option value="1">1</option>
             <option value="2">2</option>
             <option value="3">3</option>

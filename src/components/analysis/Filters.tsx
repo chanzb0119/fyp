@@ -170,7 +170,7 @@ export default function Filters({ properties, filters, onChange, onReset }: Filt
 
             {/* Beds Filter */}
             <div className="bg-gray-50 p-4 rounded-lg">
-              <h4 className="font-semibold text-gray-700 mb-3">Bedrooms</h4>
+              <h4 className="font-semibold text-gray-700 mb-3">Beds</h4>
               <div className="space-y-2 max-h-32 overflow-y-auto custom-scrollbar">
                 {uniqueBeds.map(count => count !== undefined && (
                   <label key={count} className="flex items-center space-x-3 hover:bg-gray-100 p-2 rounded-md transition-colors cursor-pointer">

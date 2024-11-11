@@ -339,8 +339,8 @@ const PropertyForm = () => {
                   required
                 >
                   <option value="">Select furnishing status</option>
-                  <option value="Fully Furnished">Fully Furnished</option>
-                  <option value="Partially Furnished">Partially Furnished</option>
+                  <option value="Fully furnished">Fully furnished</option>
+                  <option value="Partially furnished">Partially furnished</option>
                   <option value="Unfurnished">Unfurnished</option>
                 </select>
               </div>
