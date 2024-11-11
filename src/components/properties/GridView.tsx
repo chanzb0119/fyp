@@ -8,6 +8,7 @@ import { Property } from '@/libs/types/database';
 interface GridViewProps {
   searchTerm: string;
   filters: {
+    propertyState: string;
     propertyType: string;
     minPrice: string;
     maxPrice: string;
@@ -48,7 +49,11 @@ const GridView: React.FC<GridViewProps> = ({searchTerm, filters}) => {
     
     const matchesType = !filters.propertyType || property.type === filters.propertyType;
 
-    return matchesSearch && matchesPrice && matchesBedrooms && matchesType;
+    const matchesState = !filters.propertyState || property.state === filters.propertyState;
+
+    
+
+    return matchesSearch && matchesPrice && matchesBedrooms && matchesType && matchesState;
   });
 
   return (

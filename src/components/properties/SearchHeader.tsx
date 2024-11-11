@@ -5,6 +5,7 @@ interface SearchHeaderProps {
   searchTerm: string;
   onSearchChange: (value: string) => void;
   filters: {
+    propertyState: string;
     propertyType: string;
     minPrice: string;
     maxPrice: string;
@@ -67,7 +68,7 @@ const SearchHeader = ({
         </div>
 
         {/* Filters Row */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-3">
           <select
             value={filters.propertyType}
             onChange={(e) => onFilterChange('propertyType', e.target.value)}
@@ -84,6 +85,16 @@ const SearchHeader = ({
             <option value="Semi-detached House">Semi-detached House</option>
             <option value="Bungalow">Bungalow</option>
             <option value="Townhouse">Townhouse</option>
+          </select>
+
+          <select
+            value={filters.propertyState}
+            onChange={(e) => onFilterChange('propertyState', e.target.value)}
+            className="border rounded-lg p-2"
+          >
+            <option value="">All states</option>
+            <option value="Perak">Perak</option>
+            <option value="Johor">Johor</option>
           </select>
 
           <input
