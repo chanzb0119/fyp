@@ -12,6 +12,7 @@ const PropertiesView = () => {
     const [viewMode, setViewMode] = useState<ViewMode>('grid');
     const [searchTerm, setSearchTerm] = useState('');
     const [filters, setFilters] = useState({
+        propertyState: '',
         propertyType: '',
         minPrice: '',
         maxPrice: '',
