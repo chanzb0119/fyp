@@ -1,3 +1,5 @@
+import React, { useState, useCallback } from 'react';
+import { GoogleMap, Marker } from '@react-google-maps/api';
 import usePlacesAutocomplete, {
   getGeocode,
   getLatLng,
@@ -18,6 +20,12 @@ interface AddressAutocompleteProps {
 }
 
 const AddressAutocomplete = ({ onSelect }: AddressAutocompleteProps) => {
+  const [selectedLocation, setSelectedLocation] = useState({
+    lat: 3.140853,
+    lng: 101.693207
+  });
+  const [map, setMap] = useState<google.maps.Map | null>(null);
+
   const {
     ready,
     value,
@@ -26,7 +34,7 @@ const AddressAutocomplete = ({ onSelect }: AddressAutocompleteProps) => {
     clearSuggestions,
   } = usePlacesAutocomplete({
     requestOptions: {
-      componentRestrictions: { country: 'my' }, // Restrict to Malaysia
+      componentRestrictions: { country: 'my' },
     },
     debounce: 300,
   });
@@ -39,7 +47,12 @@ const AddressAutocomplete = ({ onSelect }: AddressAutocompleteProps) => {
       const results = await getGeocode({ address });
       const { lat, lng } = await getLatLng(results[0]);
       
-      // Parse address components
+      setSelectedLocation({ lat, lng });
+      if (map) {
+        map.panTo({ lat, lng });
+        map.setZoom(17);
+      }
+
       const addressComponents = results[0].address_components;
       const addressDetails: AddressDetails = {
         address: address,
@@ -49,11 +62,8 @@ const AddressAutocomplete = ({ onSelect }: AddressAutocompleteProps) => {
         longitude: lng
       };
 
-      // Map address components to your structure
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       addressComponents.forEach((component: any) => {
         const types = component.types;
-
         if (types.includes('administrative_area_level_1')) {
           addressDetails.state = component.long_name;
         }
@@ -68,20 +78,48 @@ const AddressAutocomplete = ({ onSelect }: AddressAutocompleteProps) => {
     }
   };
 
+  const handleMapClick = useCallback((e: google.maps.MapMouseEvent) => {
+    if (e.latLng) {
+      const lat = e.latLng.lat();
+      const lng = e.latLng.lng();
+      setSelectedLocation({ lat, lng });
+      onSelect({
+        address: value,
+        state: '',
+        city: '',
+        latitude: lat,
+        longitude: lng
+      });
+    }
+  }, [value, onSelect]);
+
+  const handleMarkerDragEnd = useCallback((e: google.maps.MapMouseEvent) => {
+    if (e.latLng) {
+      const lat = e.latLng.lat();
+      const lng = e.latLng.lng();
+      setSelectedLocation({ lat, lng });
+      onSelect({
+        address: value,
+        state: '',
+        city: '',
+        latitude: lat,
+        longitude: lng
+      });
+    }
+  }, [value, onSelect]);
+
   return (
     <div className="space-y-4">
       <Combobox onChange={handleSelect}>
         <div className="relative">
-          <div className="relative">
-            <MapPin className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
-            <Combobox.Input
-              className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              placeholder="Search address..."
-              value={value}
-              onChange={(e) => setValue(e.target.value)}
-              disabled={!ready}
-            />
-          </div>
+          <MapPin className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+          <Combobox.Input
+            className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            placeholder="Search address..."
+            value={value}
+            onChange={(e) => setValue(e.target.value)}
+            disabled={!ready}
+          />
           <Combobox.Options className="absolute z-10 mt-1 w-full bg-white shadow-lg max-h-60 rounded-md py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto focus:outline-none sm:text-sm">
             {status === "OK" &&
               data.map(({ place_id, description }) => (
@@ -100,6 +138,32 @@ const AddressAutocomplete = ({ onSelect }: AddressAutocompleteProps) => {
           </Combobox.Options>
         </div>
       </Combobox>
+
+      <div className="h-[400px] w-full rounded-lg overflow-hidden border border-gray-300">
+        <GoogleMap
+          mapContainerClassName="w-full h-full"
+          center={selectedLocation}
+          zoom={17}
+          onLoad={map => setMap(map)}
+          onClick={handleMapClick}
+          options={{
+            disableDefaultUI: true,
+            zoomControl: true
+          }}
+        >
+          <Marker
+            position={selectedLocation}
+            draggable={true}
+            onDragEnd={handleMarkerDragEnd}
+          />
+        </GoogleMap>
+      </div>
+
+      <div className="text-sm text-gray-500">
+        <p>Latitude: {selectedLocation.lat.toFixed(6)}</p>
+        <p>Longitude: {selectedLocation.lng.toFixed(6)}</p>
+        <p className="mt-1">You can click on the map or drag the marker to adjust the location</p>
+      </div>
     </div>
   );
 };

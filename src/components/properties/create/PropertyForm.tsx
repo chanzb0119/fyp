@@ -75,9 +75,17 @@ const PropertyForm = () => {
     'Badminton Court',
     'Gym',
     'Swimming Pool',
-    'Security',
+    '24hr Security',
     'Playground',
     'Washer/Dryer',
+    'Barbecue Area',
+    'Nursery',
+    'Sauna',
+    'Squash Court',
+    'Jacuzzi',
+    'Jogging Track',
+    'Cafeteria',
+    'Mini Market'
   ];
 
   const states = Object.keys(stateAndCities)
