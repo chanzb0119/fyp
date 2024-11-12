@@ -26,8 +26,10 @@ export interface Property {
     id: string;
     email: string;
     full_name: string;
+    avatar_url: string;
     phone: string;
     created_at: string;
+    updated_at: string;
   }
   
   export interface Database {
@@ -41,7 +43,7 @@ export interface Property {
         users: {
           Row: User;
           Insert: Omit<User, 'id' | 'created_at'>;
-          Update: Partial<Omit<User, 'id' | 'created_at'>>;
+          Update: Partial<Omit<User, 'id' | 'created_at' | 'updated_at'>>;
         };
       };
     };

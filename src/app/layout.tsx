@@ -1,7 +1,9 @@
+
 import MainLayout from '@/components/layout/MainLayout'
 import { ReactNode } from 'react'
 import './globals.css'
 import Script from 'next/script'
+import Providers from '@/components/Providers'
 
 export default function RootLayout({
   children,
@@ -18,9 +20,11 @@ export default function RootLayout({
         />
       </head>
       <body>
+        <Providers>
         <MainLayout>
-          {children}
-        </MainLayout>
+            {children}
+          </MainLayout>
+        </Providers>
       </body>
     </html>
   )

@@ -1,45 +1,36 @@
 "use client";
 // src\components\layout\MainLayout.tsx
 
-import React, { ReactNode, useEffect, useState } from 'react';
+import React, { ReactNode } from 'react';
 import { Home, Plus, User, Store, LogOut, ChartLine} from 'lucide-react';
 import Link from 'next/link';
-import { supabase } from '@/lib/supabase/client';
-import { User as SupabaseUser}  from '@supabase/supabase-js'
 import Image from 'next/image';
+import { useSession, signOut } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
 
 interface MainLayoutProps {
   children: ReactNode;
 }
 
-interface UserMetadata {
-  avatar_url?: string;
-  email?: string;
-  full_name?: string;
-  [key: string]: unknown;
-}
-
-interface CustomUser extends SupabaseUser {
-  user_metadata: UserMetadata;
-}
-
 const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
-  const [user, setUser] = useState<CustomUser | null>(null);
+  const { data: session, status } = useSession();
+  const router = useRouter();
 
-  useEffect(() => {
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) =>{
-      setUser(session?.user ?? null);
-    });
-
-    return () => subscription.unsubscribe();
-  }, []);
+  const handleLogout = async () => {
+    try {
+      await signOut({ redirect: false });
+      router.push('/'); // Redirect to login page after logout
+    } catch (error) {
+      console.error('Logout error:', error);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Navigation Bar */}
       <nav className="bg-white shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16"> {/* Added items-center here */}
+          <div className="flex justify-between items-center h-16">
             <div className="flex">
               {/* Logo */}
               <Link href="/" className="flex items-center">
@@ -51,8 +42,8 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
             </div>
 
             {/* Navigation Links */}
-            <div className="flex items-center space-x-4"> {/* Changed space-x-2 to space-x-4 and added items-center */}
-              {user? (
+            <div className="flex items-center space-x-4">
+              {status === 'authenticated' && session?.user ? (
                 <>
                   <Link
                     href="/properties"
@@ -81,10 +72,10 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
                   {/* User Profile and Logout group */}
                   <div className="flex items-center space-x-4 ml-4 pl-4 border-l border-gray-200"> 
                     {/*User icon*/}
-                    {user.user_metadata?.avatar_url ? (
+                    {session.user.image ? (
                       <div className="h-10 w-10 relative rounded-full overflow-hidden">
                         <Image
-                          src={user.user_metadata.avatar_url}
+                          src={session.user.image}
                           alt="Profile"
                           fill
                           className="object-cover"
@@ -93,13 +84,13 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
                     ) : (
                       <div className="h-10 w-10 rounded-full bg-blue-600 flex items-center justify-center">
                         <span className="text-white text-sm">
-                          {user.email?.[0]?.toUpperCase()}
+                          {session.user.email?.[0]?.toUpperCase()}
                         </span>
                       </div>
                     )}
                     
                     <button
-                      onClick={() => supabase.auth.signOut()}
+                      onClick={handleLogout}
                       className="flex items-center px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-blue-600"
                     >
                       <LogOut className="h-5 w-5 mr-1.5" />
