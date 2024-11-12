@@ -60,6 +60,15 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
                     <Store className="h-5 w-5 mr-1.5" />
                     Browse Properties
                   </Link>
+                  
+                  <Link
+                    href="/analysis"
+                    className="flex items-center px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-blue-600"
+                  >
+                    <ChartLine className="h-5 w-5 mr-1.5" />
+                    Market Analysis
+                  </Link>
+                  
                   <Link
                     href="/properties/create"
                     className="flex items-center px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-blue-600"

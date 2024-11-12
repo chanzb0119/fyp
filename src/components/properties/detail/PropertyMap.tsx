@@ -1,4 +1,6 @@
-// components/PropertyMap.tsx
+"use client";
+
+// src\components\properties\detail\PropertyMap.tsx
 import { geocodeAddress } from '@/services/geocoding';
 import React, { useEffect, useState } from 'react';
 import CustomGoogleMap from './CustomGoogleMap';

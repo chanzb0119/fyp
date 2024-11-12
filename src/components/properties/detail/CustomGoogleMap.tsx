@@ -1,6 +1,6 @@
 "use client";
 
-// components/CustomGoogleMap.tsx
+// src\components\properties\detail\CustomGoogleMap.tsx
 import React from 'react';
 import { useEffect, useRef } from 'react';
 

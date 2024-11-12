@@ -1,18 +1,17 @@
-"use client";
 
-import React, { useState } from 'react';
+
+// src\components\properties\detail\PropertyDetails.tsx
+import React from 'react';
 import { 
   Bed, 
   Bath, 
   Square,
   MapPin,
-  ChevronLeft,
-  ChevronRight,
   Car
 } from 'lucide-react';
-import Image from 'next/image';
 import PropertyMap from './PropertyMap';
 import Description from './Description';
+import ImageGallery from './ImageGallery';
 
 interface PropertyDetailsProps {
   property: {
@@ -38,71 +37,11 @@ interface PropertyDetailsProps {
 }
 
 const PropertyDetails = ({ property }: PropertyDetailsProps) => {
-  const [currentImageIndex, setCurrentImageIndex] = useState(0);
-
-  const nextImage = () => {
-    setCurrentImageIndex((prev) => 
-      prev === property.images.length - 1 ? 0 : prev + 1
-    );
-  };
-
-  const previousImage = () => {
-    setCurrentImageIndex((prev) => 
-      prev === 0 ? property.images.length - 1 : prev - 1
-    );
-  };
 
   return (
     <div className="max-w-5xl mx-auto sm:px-6 lg:px-8 ">
       {/* Image Gallery */}
-      <div className="relative aspect-video bg-gray-100 rounded-2xl overflow-hidden mb-8">
-        {property.images.length > 0 ? (
-          <>
-            <Image
-              src={property.images[currentImageIndex]}
-              alt={`${property.title} - Image ${currentImageIndex + 1}`}
-              fill
-              className="object-cover"
-              sizes="(max-width: 1280px) 100vw, 1280px"
-              priority
-            />
-            {property.images.length > 1 && (
-              <>
-                <button
-                  onClick={previousImage}
-                  className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/80 p-2 rounded-full hover:bg-white"
-                  aria-label="Previous image"
-                >
-                  <ChevronLeft className="h-6 w-6" />
-                </button>
-                <button
-                  onClick={nextImage}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/80 p-2 rounded-full hover:bg-white"
-                  aria-label="Next image"
-                >
-                  <ChevronRight className="h-6 w-6" />
-                </button>
-              </>
-            )}
-            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex space-x-2">
-              {property.images.map((_, index) => (
-                <button
-                  key={index}
-                  onClick={() => setCurrentImageIndex(index)}
-                  className={`w-2 h-2 rounded-full transition-colors ${
-                    index === currentImageIndex ? 'bg-white' : 'bg-white/50'
-                  }`}
-                  aria-label={`Go to image ${index + 1}`}
-                />
-              ))}
-            </div>
-          </>
-        ) : (
-          <div className="flex items-center justify-center h-full">
-            <span className="text-gray-400">No images available</span>
-          </div>
-        )}
-      </div>
+      <ImageGallery images={property.images} title={property.title} />
 
       {/* Property Information */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">

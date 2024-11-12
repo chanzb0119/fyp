@@ -1,5 +1,6 @@
 "use client"
 
+// src\components\properties\detail\Description.tsx
 import React, { useState, useRef, useEffect } from 'react';
 import { ChevronDown } from 'lucide-react';
 
