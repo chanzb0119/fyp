@@ -72,11 +72,11 @@ const PropertyForm = () => {
   const amenitiesList: string[] = [
     'WiFi',
     'Air Conditioning',
-    'Parking',
+    'Badminton Court',
     'Gym',
     'Swimming Pool',
     'Security',
-    'Furnished',
+    'Playground',
     'Washer/Dryer',
   ];
 
@@ -273,7 +273,7 @@ const PropertyForm = () => {
             <Building2 className="h-5 w-5" />
             Property Details
           </h2>
-          <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-4">
+          <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-3">
             <div>
               <label className="block text-sm font-medium text-gray-700">
                 Monthly Rent (RM)

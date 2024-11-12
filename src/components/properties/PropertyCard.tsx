@@ -10,7 +10,7 @@ interface PropertyCardProps {
   id: string;
   title: string;
   price: number;
-  bedrooms: number;
+  beds: number;
   bathrooms: number;
   carparks: number;
   size: number;
@@ -26,7 +26,7 @@ const PropertyCard = ({
   id,
   title, 
   price, 
-  bedrooms, 
+  beds, 
   bathrooms, 
   carparks,
   size, 
@@ -83,7 +83,7 @@ const PropertyCard = ({
         <div className="mt-4 flex items-center gap-4 text-gray-600">
           <div className="flex items-center gap-1">
             <Bed className="w-4 h-4" />
-            <span className="text-sm">{bedrooms}</span>
+            <span className="text-sm">{beds}</span>
           </div>
           <div className="flex items-center gap-1">
             <Bath className="w-4 h-4" />
