@@ -1,9 +1,10 @@
 "use client";
+// src\components\layout\MainLayout.tsx
 
 import React, { ReactNode, useEffect, useState } from 'react';
 import { Home, Plus, User, Store, LogOut, ChartLine} from 'lucide-react';
 import Link from 'next/link';
-import { supabase } from '@/libs/supabase/client';
+import { supabase } from '@/lib/supabase/client';
 import { User as SupabaseUser}  from '@supabase/supabase-js'
 import Image from 'next/image';
 

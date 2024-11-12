@@ -5,7 +5,7 @@ import React, { useState, useEffect } from 'react';
 import { propertyService } from '@/services/properties';
 import PropertyCard from './PropertyCard';
 import Pagination from '@/components/ui/pagination';
-import { Property } from '@/libs/types/database';
+import { Property } from '@/lib/types/database';
 import { useSearchParams, useRouter } from 'next/navigation';
 
 interface GridViewProps {

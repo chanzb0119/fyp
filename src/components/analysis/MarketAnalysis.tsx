@@ -5,8 +5,8 @@ import { propertyService } from "@/services/properties";
 import { useState, useEffect, useMemo } from "react";
 import MarketAnalysisDashboard from "./MarketAnalysisDashboard";
 import Filters from "./Filters";
-import { Property } from '@/libs/types/database';
-import { FilterState } from "@/libs/types/filters";
+import { Property } from '@/lib/types/database';
+import { FilterState } from "@/lib/types/filters";
 
 const MarketAnalysis = () => {
 const [properties, setProperties] = useState<Property[]>([]);

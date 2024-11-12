@@ -1,8 +1,8 @@
-import { supabase } from '@/libs/supabase/client';
+import { supabase } from '@/lib/supabase/client';
 import { claude } from './claude';
-import { Property } from '@/libs/types/database';
+import { Property } from '@/lib/types/database';
 import { locationInsightService } from './locationInsights';
-import { ChatMode } from '@/libs/types/chat';
+import { ChatMode } from '@/lib/types/chat';
 
 interface NearbyPlace {
   name: string;

@@ -1,6 +1,6 @@
 // src/services/rentalAnalysis.ts
 
-import { Property } from "@/libs/types/database";
+import { Property } from "@/lib/types/database";
 
 export const analyzeRentalData = (properties: Property[]) => {
   // Group properties by type and state for analysis

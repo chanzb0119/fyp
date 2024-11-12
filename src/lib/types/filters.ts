@@ -1,3 +1,5 @@
+// src\lib\types\filters.ts
+
 export interface FilterState {
     propertyType: string[];
     cities: string[];

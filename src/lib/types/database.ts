@@ -1,4 +1,4 @@
-// src/lib/types/database.ts
+// src\lib\types\database.ts
 
 export interface Property {
     id: string;

@@ -6,7 +6,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { Bath, Bed, Heart, Share2 } from 'lucide-react';
 import { propertyService } from '@/services/properties';
-import { Property } from '@/libs/types/database';
+import { Property } from '@/lib/types/database';
 
 interface MapViewProps {
   searchTerm: string;

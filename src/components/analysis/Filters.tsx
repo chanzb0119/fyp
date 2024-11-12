@@ -2,9 +2,9 @@
 "use client";
 
 import { useCallback, useMemo, useState } from 'react';
-import { Property } from '@/libs/types/database';
+import { Property } from '@/lib/types/database';
 import { ChevronDown, ChevronUp, Filter } from 'lucide-react';
-import { FilterState } from '@/libs/types/filters';
+import { FilterState } from '@/lib/types/filters';
 
 export interface FiltersProps {
   properties: Property[];

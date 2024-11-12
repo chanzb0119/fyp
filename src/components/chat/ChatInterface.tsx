@@ -4,9 +4,9 @@ import { useEffect, useState } from 'react';
 import { chatService } from '@/services/chatService';
 import { X, MessageCircle } from 'lucide-react';
 import Image from 'next/image';
-import { Property } from '@/libs/types/database';
+import { Property } from '@/lib/types/database';
 import Link from 'next/link';
-import { ChatMode } from '@/libs/types/chat';
+import { ChatMode } from '@/lib/types/chat';
 
 interface ChatInterfaceProps {
   mode: ChatMode;

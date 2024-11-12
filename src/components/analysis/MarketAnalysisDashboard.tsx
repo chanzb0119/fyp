@@ -2,7 +2,7 @@ import React, { useMemo } from 'react';
 import { BarChart, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Bar } from 'recharts';
 import { analyzeRentalData } from '@/services/rentalAnalysis';
 import { ResponsiveChartWrapper } from './ResponsiveChartWrapper';
-import { Property } from '@/libs/types/database';
+import { Property } from '@/lib/types/database';
 
 interface MarketAnalysisDashboardProps {
   properties: Property[];

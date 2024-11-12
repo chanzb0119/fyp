@@ -6,7 +6,7 @@ import React, { useState, useCallback, useEffect } from 'react';
 import { Building2, Home, Info, Upload, X } from 'lucide-react';
 import { propertyService } from '@/services/properties';
 import { uploadImage } from '@/services/image-upload';
-import { stateAndCities } from '@/libs/constant/malaysiaStates';
+import { stateAndCities } from '@/lib/constant/malaysiaStates';
 import { useUser } from '@/hooks/useUser';
 import Link from 'next/link';
 import AddressAutocomplete from './AddressAutocomplete';

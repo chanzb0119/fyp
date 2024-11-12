@@ -1,4 +1,4 @@
-// src/lib/claude.ts
+// src\services\claude.ts
 export class ClaudeService {
   private apiKey: string;
   private baseUrl: string;

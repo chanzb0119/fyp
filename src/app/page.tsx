@@ -1,6 +1,6 @@
 import ChatInterface2 from '@/components/chat/ChatInterface2'
 import ChatInterface from '@/components/chat/ChatInterface'
-import { CHAT_INTERFACE } from '@/libs/constant/malaysiaStates'
+import { CHAT_INTERFACE } from '@/lib/constant/malaysiaStates'
 
 export default function Home() {
   return (

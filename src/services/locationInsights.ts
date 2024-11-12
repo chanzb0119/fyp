@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Property } from '@/libs/types/database';
+import { Property } from '@/lib/types/database';
 import { claude } from './claude';
 
 interface NearbyPlace {

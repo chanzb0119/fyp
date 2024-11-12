@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-// utils/geocoding.ts
+// src\services\geocoding.ts
 interface GeocodeResult {
     latitude: number;
     longitude: number;
