@@ -21,16 +21,24 @@ export interface Property {
     longitude: number;
     furnishing: string;
   }
-  
-  export interface User {
-    id: string;
+
+  export interface UserProfile {
+    user_id: string;
     email: string;
-    full_name: string;
-    avatar_url: string;
-    phone: string;
+    name: string | null;
+    phone: string | null;
+    profile_image: string | null;
+    role: 'user' | 'landlord' | 'admin';
+    password: string;  // Will store hashed password
     created_at: string;
     updated_at: string;
+    email_verified: boolean;
+    verification_token?: string | null;
+    verification_token_expires?: string | null;
+    google_id?: string | null;
   }
+  
+  
   
   export interface Database {
     public: {
@@ -39,11 +47,6 @@ export interface Property {
           Row: Property;
           Insert: Omit<Property, 'id' | 'created_at'>;
           Update: Partial<Omit<Property, 'id' | 'created_at'>>;
-        };
-        users: {
-          Row: User;
-          Insert: Omit<User, 'id' | 'created_at'>;
-          Update: Partial<Omit<User, 'id' | 'created_at' | 'updated_at'>>;
         };
       };
     };

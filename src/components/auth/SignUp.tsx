@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { Card, CardHeader, CardContent, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -10,52 +10,50 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Home } from 'lucide-react';
 import GoogleIcon from './google';
 import { signIn } from 'next-auth/react';
+import { authService } from '@/services/auth';
 
-const Login = () => {
+const SignUp = () => {
   const router = useRouter();
-  const searchParams = useSearchParams();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
   const [formData, setFormData] = useState({
+    name: '',
     email: '',
-    password: ''
+    password: '',
+    confirmPassword: ''
   });
 
-  // Show success message from URL params (e.g., after signup)
-  const message = searchParams.get('message');
-
-  const handleGoogleLogin = async () => {
+  const handleGoogleSignUp = async () => {
     try {
       await signIn('google', {
         callbackUrl: `${window.location.origin}/`,
       });
     } catch (error) {
-      console.error('Google login error:', error);
-      setError('Failed to login with Google');
+      console.error('Google signup error:', error);
+      setError('Failed to sign up with Google');
     }
   };
 
-  const handleEmailLogin = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
     setIsLoading(true);
 
     try {
-      const result = await signIn('credentials', {
-        redirect: false,
+      if (formData.password !== formData.confirmPassword) {
+        throw new Error('Passwords do not match');
+      }
+
+      await authService.signUpWithEmail({
         email: formData.email,
         password: formData.password,
+        name: formData.name
       });
 
-      if (result?.error) {
-        setError('Invalid email or password');
-      } else {
-        router.push('/');
-        router.refresh();
-      }
+      router.push(`/verify-reminder?email=${encodeURIComponent(formData.email)}`);
     } catch (error) {
-      setError('An error occurred during login');
-      throw error;
+      console.error('Signup error:', error);
+      setError(error instanceof Error ? error.message : 'Failed to create account');
     } finally {
       setIsLoading(false);
     }
@@ -70,25 +68,31 @@ const Login = () => {
       
       <Card className="w-full max-w-md">
         <CardHeader className="space-y-1">
-          <h2 className="text-2xl font-semibold text-center">Welcome back</h2>
+          <h2 className="text-2xl font-semibold text-center">Create an Account</h2>
           <p className="text-sm text-gray-500 text-center">
-            Sign in to your account
+            Sign up to start your property search
           </p>
         </CardHeader>
         <CardContent className="grid gap-4">
-          {message && (
-            <Alert>
-              <AlertDescription>{message}</AlertDescription>
-            </Alert>
-          )}
-          
           {error && (
             <Alert variant="destructive">
               <AlertDescription>{error}</AlertDescription>
             </Alert>
           )}
-
-          <form onSubmit={handleEmailLogin} className="space-y-4">
+          
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="name">Full Name</Label>
+              <Input
+                id="name"
+                type="text"
+                placeholder="John Doe"
+                value={formData.name}
+                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                required
+              />
+            </div>
+            
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
               <Input
@@ -102,15 +106,7 @@ const Login = () => {
             </div>
             
             <div className="space-y-2">
-              <div className="flex items-center justify-between">
-                <Label htmlFor="password">Password</Label>
-                <a 
-                  href="/forgot-password" 
-                  className="text-sm text-blue-600 hover:underline"
-                >
-                  Forgot password?
-                </a>
-              </div>
+              <Label htmlFor="password">Password</Label>
               <Input
                 id="password"
                 type="password"
@@ -119,9 +115,20 @@ const Login = () => {
                 required
               />
             </div>
-
+            
+            <div className="space-y-2">
+              <Label htmlFor="confirmPassword">Confirm Password</Label>
+              <Input
+                id="confirmPassword"
+                type="password"
+                value={formData.confirmPassword}
+                onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
+                required
+              />
+            </div>
+            
             <Button type="submit" className="w-full" disabled={isLoading}>
-              {isLoading ? 'Signing in...' : 'Sign in'}
+              {isLoading ? 'Creating Account...' : 'Sign Up'}
             </Button>
           </form>
 
@@ -130,13 +137,13 @@ const Login = () => {
               <span className="w-full border-t" />
             </div>
             <div className="relative flex justify-center text-xs uppercase">
-              <span className="bg-white px-2 text-gray-500">Or continue with</span>
+              <span className="bg-white px-2 text-gray-500">Or</span>
             </div>
           </div>
 
           <Button 
             variant="outline" 
-            onClick={handleGoogleLogin}
+            onClick={handleGoogleSignUp}
             className="w-full h-12"
           >
             <GoogleIcon />
@@ -144,13 +151,13 @@ const Login = () => {
           </Button>
         </CardContent>
         <CardFooter className="flex flex-col space-y-4">
-          <p className="text-center text-sm text-gray-500">
-            Don&apos;t have an account?{' '}
+          <p className="px-8 text-center text-sm text-gray-500">
+            Already have an account?{' '}
             <a 
-              href="/signup" 
+              href="/login" 
               className="text-blue-600 hover:underline"
             >
-              Sign up
+              Log in
             </a>
           </p>
         </CardFooter>
@@ -159,4 +166,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default SignUp;

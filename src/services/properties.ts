@@ -1,7 +1,7 @@
 // src\services\properties.ts
 
 import { supabase } from '@/lib/supabase/client';
-import { Property, User } from '@/lib/types/database';
+import { Property } from '@/lib/types/database';
 
 export interface PaginationParams {
   page: number;
