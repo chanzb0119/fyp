@@ -33,7 +33,7 @@ export const propertyService = {
 
     // Start building the query
     let query = supabase
-      .from('properties')
+      .from('property')
       .select('*', { count: 'exact' });
 
     // Apply filters if they exist
@@ -75,9 +75,9 @@ export const propertyService = {
     };
   },
   
-  async createProperty(property: Omit<Property, 'id'>) {
+  async createProperty(property: Omit<Property, 'property_id'>) {
     const { data, error } = await supabase
-      .from('properties')
+      .from('property')
       .insert(property)
       .select()
       .single();
@@ -88,7 +88,7 @@ export const propertyService = {
 
   async getProperties() {
     const { data, error } = await supabase
-      .from('properties')
+      .from('property')
       .select('*')
       .order('created_at', { ascending: false });
 
@@ -96,22 +96,22 @@ export const propertyService = {
     return data;
   },
 
-  async getPropertyById(id: string) {
+  async getPropertyById(property_id: string) {
     const { data, error } = await supabase
-      .from('properties')
+      .from('property')
       .select('*')
-      .eq('id', id)
+      .eq('property_id', property_id)
       .single();
 
     if (error) throw error;
     return data;
   },
 
-  async updateProperty(id: string, updates: Partial<Property>) {
+  async updateProperty(property_id: string, updates: Partial<Property>) {
     const { data, error } = await supabase
-      .from('properties')
+      .from('property')
       .update(updates)
-      .eq('id', id)
+      .eq('property_id', property_id)
       .select()
       .single();
 
@@ -119,11 +119,11 @@ export const propertyService = {
     return data;
   },
 
-  async deleteProperty(id: string) {
+  async deleteProperty(property_id: string) {
     const { error } = await supabase
-      .from('properties')
+      .from('property')
       .delete()
-      .eq('id', id);
+      .eq('property_id', property_id);
 
     if (error) throw error;
     return true;

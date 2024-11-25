@@ -7,7 +7,7 @@ import Link from 'next/link';
 import { useUser } from '@/hooks/useUser';
 
 interface PropertyCardProps {
-  id: string;
+  property_id: string;
   title: string;
   price: number;
   beds: number;
@@ -23,7 +23,7 @@ interface PropertyCardProps {
 }
 
 const PropertyCard = ({ 
-  id,
+  property_id,
   title, 
   price, 
   beds, 
@@ -41,7 +41,7 @@ const PropertyCard = ({
 
   const isOwner = user?.id === user_id;
   return (
-    <Link href={`/properties/${id}`} className="block bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow">
+    <Link href={`/properties/${property_id}`} className="block bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow">
       {/* Property Image */}
       <div className="relative h-48 w-full">
         <Image

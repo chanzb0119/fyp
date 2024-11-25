@@ -1,7 +1,7 @@
 // src\lib\types\database.ts
 
 export interface Property {
-    id: string;
+    property_id: string;
     created_at: string;
     title: string;
     type: string;
