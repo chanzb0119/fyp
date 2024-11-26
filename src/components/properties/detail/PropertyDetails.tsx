@@ -1,17 +1,22 @@
+"use client";
 
-
-// src\components\properties\detail\PropertyDetails.tsx
 import React from 'react';
 import { 
   Bed, 
   Bath, 
   Square,
   MapPin,
-  Car
+  Car,
+  Building2,
+  Calendar
 } from 'lucide-react';
 import PropertyMap from './PropertyMap';
 import Description from './Description';
 import ImageGallery from './ImageGallery';
+import PropertyCard from '../PropertyCard';
+import { format } from 'date-fns';
+import StickyActions from './StickyAction';
+import RecommendedProperties from './RecommendedProperty';
 
 interface PropertyDetailsProps {
   property: {
@@ -33,13 +38,16 @@ interface PropertyDetailsProps {
     created_at: string;
     furnishing: string;
     carparks: number;
+    user_id: string;
   };
 }
 
 const PropertyDetails = ({ property }: PropertyDetailsProps) => {
+  
+  const formattedDate = format(new Date(property.created_at), 'MMMM d, yyyy');
 
   return (
-    <div className="max-w-5xl mx-auto sm:px-6 lg:px-8 ">
+    <div className="max-w-7xl mx-auto sm:px-6 lg:px-8 pb-12">
       {/* Image Gallery */}
       <ImageGallery images={property.images} title={property.title} />
 
@@ -55,6 +63,18 @@ const PropertyDetails = ({ property }: PropertyDetailsProps) => {
                 <MapPin className="h-4 w-4" />
                 <span>{property.city + ", " + property.state}</span>
               </div>
+            </div>
+
+            {/* Property Type and Listed Date - Moved from sticky container */}
+            <div className="flex flex-wrap gap-4 mt-4 text-gray-600">
+                <div className="flex items-center gap-2">
+                  <Building2 className="h-4 w-4" />
+                  <span>{property.type}</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Calendar className="h-4 w-4" />
+                  <span>Listed on {formattedDate}</span>
+                </div>
             </div>
 
             {/* Key Features */}
@@ -108,36 +128,20 @@ const PropertyDetails = ({ property }: PropertyDetailsProps) => {
           </div>
         </div>
 
-        {/* Sidebar */}
+        {/* Sticky Sidebar */}
         <div className="lg:col-span-1">
-          <div className="bg-white rounded-lg shadow-sm p-6 space-y-6 sticky top-8">
-            <div className="text-center pb-6 border-b">
-              <span className="text-3xl font-bold text-blue-600">
-                RM {property.price.toLocaleString()}
-              </span>
-              <span className="text-gray-600">/month</span>
-            </div>
-
-            <div className="space-y-4">
-              <div className="flex justify-between">
-                <span className="text-gray-600">Property Type</span>
-                <span className="font-medium">{property.type}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-gray-600">Listed Date</span>
-                <span className="font-medium">
-                  {property.created_at}
-                </span>
-              </div>
-            </div>
-
-            {/* Contact buttons would go here in future */}
-            <button className="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition-colors">
-              Contact Owner
-            </button>
-          </div>
+          <StickyActions
+            price={property.price}
+            ownerId={property.user_id}
+          />
         </div>
       </div>
+
+      {/* Recommended Properties */}
+      <RecommendedProperties 
+        propertyId={property.id}
+        userId={undefined} // TODO: Pass the current user's ID from session
+      />
     </div>
   );
 };

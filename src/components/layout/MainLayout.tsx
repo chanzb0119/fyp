@@ -2,7 +2,7 @@
 // src\components\layout\MainLayout.tsx
 
 import React, { ReactNode } from 'react';
-import { Home, Plus, User, Store, LogOut } from 'lucide-react';
+import { Home, Plus, User, Store } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useSession, signOut } from 'next-auth/react';

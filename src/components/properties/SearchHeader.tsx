@@ -23,7 +23,7 @@ const SearchHeader = ({
   onSearch,
 }: SearchHeaderProps) => {
   return (
-    <div className="bg-white sticky top-0 z-10 border-b">
+    <div className="bg-white border-b">
       <div className="max-w-7xl mx-auto p-4 space-y-4">
         {/* Search and Button Row */}
         <div className="flex gap-4 items-center">

@@ -1,3 +1,5 @@
+// src\app\properties\[id]\page.tsx
+
 import { propertyService } from '@/services/properties';
 import PropertyDetails from '@/components/properties/detail/PropertyDetails';
 import ChatInterface2 from '@/components/chat/ChatInterface2'
