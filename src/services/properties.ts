@@ -26,6 +26,7 @@ export const propertyService = {
       maxPrice?: string;
       beds?: string;
       searchTerm?: string;
+      sort?: string;
     }
   ): Promise<PaginatedResponse<Property>> {
     const { page = 1, limit = 12 } = params;
@@ -56,11 +57,32 @@ export const propertyService = {
       if (filters.searchTerm) {
         query = query.or(`title.ilike.%${filters.searchTerm}%,city.ilike.%${filters.searchTerm}%,state.ilike.%${filters.searchTerm}%`);
       }
+
+      // Apply sorting
+      switch (filters.sort) {
+        case 'recent':
+          query = query.order('created_at', { ascending: false });
+          break;
+        case 'price_asc':
+          query = query.order('price', { ascending: true });
+          break;
+        case 'price_desc':
+          query = query.order('price', { ascending: false });
+          break;
+        case 'size_desc':
+          query = query.order('size', { ascending: false });
+          break;
+        case 'size_asc':
+          query = query.order('size', { ascending: true });
+          break;
+        default:
+          query = query.order('created_at', { ascending: false });
+          break;
+      }
     }
 
     // Add pagination
     const { data, error, count } = await query
-      .order('created_at', { ascending: false })
       .range(offset, offset + limit - 1);
 
     if (error) throw error;
