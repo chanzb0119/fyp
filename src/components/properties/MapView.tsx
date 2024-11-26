@@ -93,7 +93,7 @@ const MapView = ({ searchTerm, filters }: MapViewProps) => {
         <div className="space-y-4 p-4">
           {filteredProperties.map((property) => (
             <div
-              key={property.id}
+              key={property.property_id}
               className="bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow cursor-pointer"
               onClick={() => {
                 setSelectedProperty(property);
@@ -155,7 +155,7 @@ const MapView = ({ searchTerm, filters }: MapViewProps) => {
             {/* Property Markers */}
             {filteredProperties.map((property) => (
               <Marker
-                key={property.id}
+                key={property.property_id}
                 position={{ lat: property.latitude, lng: property.longitude }}
                 onClick={() => {
                   setSelectedProperty(property);
@@ -222,7 +222,7 @@ const MapView = ({ searchTerm, filters }: MapViewProps) => {
                       <span className='flex items-center gap-1'>{selectedProperty.size} sqft</span>
                     </div>
                     <Link
-                      href={`/properties/${selectedProperty.id}`}
+                      href={`/properties/${selectedProperty.property_id}`}
                       className="inline-block mt-2 px-4 py-2 bg-blue-600 text-white rounded-md text-sm hover:bg-blue-700 transition-colors w-full text-center"
                     >
                       View Details

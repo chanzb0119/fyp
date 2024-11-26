@@ -2,11 +2,17 @@
 // src\components\layout\MainLayout.tsx
 
 import React, { ReactNode } from 'react';
-import { Home, Plus, User, Store, LogOut, ChartLine} from 'lucide-react';
+import { Home, Plus, User, Store, LogOut } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useSession, signOut } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 
 interface MainLayoutProps {
   children: ReactNode;
@@ -54,14 +60,6 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
                   </Link>
                   
                   <Link
-                    href="/analysis"
-                    className="flex items-center px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-blue-600"
-                  >
-                    <ChartLine className="h-5 w-5 mr-1.5" />
-                    Market Analysis
-                  </Link>
-                  
-                  <Link
                     href="/properties/create"
                     className="flex items-center px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-blue-600"
                   >
@@ -71,31 +69,34 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
 
                   {/* User Profile and Logout group */}
                   <div className="flex items-center space-x-4 ml-4 pl-4 border-l border-gray-200"> 
-                    {/*User icon*/}
-                    {session.user.image ? (
-                      <div className="h-10 w-10 relative rounded-full overflow-hidden">
-                        <Image
-                          src={session.user.image}
-                          alt="Profile"
-                          fill
-                          className="object-cover"
-                        />
-                      </div>
-                    ) : (
-                      <div className="h-10 w-10 rounded-full bg-blue-600 flex items-center justify-center">
-                        <span className="text-white text-sm">
-                          {session.user.email?.[0]?.toUpperCase()}
-                        </span>
-                      </div>
-                    )}
-                    
-                    <button
-                      onClick={handleLogout}
-                      className="flex items-center px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-blue-600"
-                    >
-                      <LogOut className="h-5 w-5 mr-1.5" />
-                      Logout
-                    </button>
+                    <DropdownMenu>
+                      <DropdownMenuTrigger className="flex items-center space-x-2">
+                        {session.user.image ? (
+                          <div className="h-10 w-10 relative rounded-full overflow-hidden">
+                            <Image
+                              src={session.user.image}
+                              alt="Profile"
+                              fill
+                              className="object-cover"
+                            />
+                          </div>
+                        ) : (
+                          <div className="h-10 w-10 rounded-full bg-blue-600 flex items-center justify-center">
+                            <span className="text-white text-sm">
+                              {session.user.email?.[0]?.toUpperCase()}
+                            </span>
+                          </div>
+                        )}
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end">
+                        <DropdownMenuItem onClick={() => router.push('/profile')}>
+                          Profile
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onClick={handleLogout}>
+                          Logout
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
                   </div>
                 </>
               ) : (
@@ -106,14 +107,6 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
                   >
                     <Store className="h-5 w-5 mr-1.5" />
                     Browse Properties
-                  </Link>
-
-                  <Link
-                    href="/analysis"
-                    className="flex items-center px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-blue-600"
-                  >
-                    <ChartLine className="h-5 w-5 mr-1.5" />
-                    Market Analysis
                   </Link>
                   
                   <Link

@@ -1,3 +1,5 @@
+//src\components\properties\PropertyCard.tsx
+
 "use client";
 
 import React from 'react';
@@ -40,6 +42,18 @@ const PropertyCard = ({
   const { user } = useUser();
 
   const isOwner = user?.id === user_id;
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    return date.toLocaleString('en-GB', {
+      day: 'numeric',
+      month: 'short',
+      year: 'numeric',
+      hour: 'numeric',
+      minute: 'numeric',
+      hour12: true
+    });
+  };
+
   return (
     <Link href={`/properties/${property_id}`} className="block bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow">
       {/* Property Image */}
@@ -76,7 +90,7 @@ const PropertyCard = ({
         {/* Listed date */}
         <div className="mt-1 items-center text-gray-800 flex gap-1">
           <Calendar className="w-3 h-3" />
-          <span className="text-sm">Listed Date: {created_at}</span>
+          <span className="text-sm">Posted on: {formatDate(created_at)}</span>
         </div>
 
         {/* Features */}
