@@ -7,9 +7,10 @@ import { Building2, Home, Info, Upload, X } from 'lucide-react';
 import { propertyService } from '@/services/properties';
 import { uploadImage } from '@/services/image-upload';
 import { stateAndCities } from '@/lib/constant/malaysiaStates';
-import { useUser } from '@/hooks/useUser';
 import Link from 'next/link';
 import AddressAutocomplete from './AddressAutocomplete';
+import { useSession } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
 
 interface PropertyFormData {
   title: string;
@@ -31,7 +32,9 @@ interface PropertyFormData {
 }
 
 const PropertyForm = () => {
-  const { user } = useUser()
+  const { data: session, status } = useSession();
+  const router = useRouter();
+  
   const [formData, setFormData] = useState<PropertyFormData>({
       title: '',
       type: '',
@@ -56,6 +59,12 @@ const PropertyForm = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [uploadProgress, setUploadProgress] = useState(0);
+
+  useEffect(() => {
+    if (status === "unauthenticated") {
+      router.push('/login');
+    }
+  }, [status, router]);
 
   const propertyTypes: string[] = [
     'Apartment',
@@ -89,15 +98,6 @@ const PropertyForm = () => {
   ];
 
   const states = Object.keys(stateAndCities)
-
-  const getFormattedDate = ():string => {
-    const today = new Date();
-    const yyyy = today.getFullYear();
-    const mm = String(today.getMonth() + 1).padStart(2, '0'); // Months are 0-based
-    const dd = String(today.getDate()).padStart(2, '0');
-    
-    return `${yyyy}-${mm}-${dd}`;
-  };
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
@@ -139,7 +139,7 @@ const PropertyForm = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!user) {
+    if (!session?.user) {
       setError('Please sign in to create a listing');
       return;
     }
@@ -170,12 +170,11 @@ const PropertyForm = () => {
         state: formData.state,
         city: formData.city,
         amenities: formData.amenities,
-        user_id: user.id,
+        user_id: session.user.id,
         images: uploadedUrls,
         latitude: formData.latitude,
         longitude: formData.longitude,
-        furnishing: formData.furnishing,
-        created_at: getFormattedDate()
+        furnishing: formData.furnishing
       };
 
       await propertyService.createProperty(propertyData);
@@ -216,7 +215,15 @@ const PropertyForm = () => {
     };
   }, [previews]);
 
-  if (!user) {
+  if (status === "loading") {
+    return (
+      <div className="text-center py-12">
+        <p className="text-lg text-gray-600">Loading...</p>
+      </div>
+    );
+  }
+
+  if (status === "unauthenticated") {
     return (
       <div className="text-center py-12">
         <p className="text-lg text-gray-600">Please sign in to create a listing</p>

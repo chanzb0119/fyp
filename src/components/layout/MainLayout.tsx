@@ -1,8 +1,8 @@
 "use client";
 // src\components\layout\MainLayout.tsx
 
-import React, { ReactNode } from 'react';
-import { Home, Plus, User, Store } from 'lucide-react';
+import React, { ReactNode, useState } from 'react';
+import { Home, Plus, User, Store, ChevronDown } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useSession, signOut } from 'next-auth/react';
@@ -21,6 +21,7 @@ interface MainLayoutProps {
 const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
   const { data: session, status } = useSession();
   const router = useRouter();
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   const handleLogout = async () => {
     try {
@@ -69,8 +70,8 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
 
                   {/* User Profile and Logout group */}
                   <div className="flex items-center space-x-4 ml-4 pl-4 border-l border-gray-200"> 
-                    <DropdownMenu>
-                      <DropdownMenuTrigger className="flex items-center space-x-2">
+                    <DropdownMenu onOpenChange={setIsDropdownOpen}>
+                      <DropdownMenuTrigger className="flex items-center space-x-2 focus:outline-none group">
                         {session.user.image ? (
                           <div className="h-10 w-10 relative rounded-full overflow-hidden">
                             <Image
@@ -87,13 +88,39 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
                             </span>
                           </div>
                         )}
+                        <ChevronDown 
+                          className={`h-4 w-4 text-gray-600 transition-transform duration-200 ease-in-out ${
+                            isDropdownOpen ? 'rotate-180' : ''
+                          } group-hover:text-blue-600`}
+                        />
                       </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end">
-                        <DropdownMenuItem onClick={() => router.push('/profile')}>
-                          Profile
+                      <DropdownMenuContent align="end" className="w-48">
+                        <DropdownMenuItem 
+                          onClick={() => router.push('/profile')}
+                          className="cursor-pointer flex items-center space-x-2"
+                        >
+                          <User className="h-4 w-4" />
+                          <span>Profile</span>
                         </DropdownMenuItem>
-                        <DropdownMenuItem onClick={handleLogout}>
-                          Logout
+                        <DropdownMenuItem 
+                          onClick={handleLogout}
+                          className="cursor-pointer text-red-600 focus:text-red-600 flex items-center space-x-2"
+                        >
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            className="h-4 w-4"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
+                            />
+                          </svg>
+                          <span>Logout</span>
                         </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>

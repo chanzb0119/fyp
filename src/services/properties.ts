@@ -97,7 +97,7 @@ export const propertyService = {
     };
   },
   
-  async createProperty(property: Omit<Property, 'property_id'>) {
+  async createProperty(property: Omit<Property, 'property_id' | 'created_at'>) {
     const { data, error } = await supabase
       .from('property')
       .insert(property)

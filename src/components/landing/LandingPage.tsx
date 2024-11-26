@@ -67,7 +67,7 @@ export default function LandingPage() {
         backgroundImage: 'url(/landing-background.jpg)'
       }}>
         <div className="absolute inset-0 bg-black/40" />
-        <div className="relative max-w-4xl mx-auto px-4 pt-32 sm:px-6 lg:px-8">
+        <div className="relative max-w-3xl mx-auto px-4 pt-32 sm:px-6 lg:px-8">
           {/* Search Container */}
           <div className="bg-white/80 rounded-3xl shadow-lg p-6 mx-auto">
             <h1 className="text-3xl font-bold text-center mb-8">
@@ -159,7 +159,7 @@ export default function LandingPage() {
       </div>
 
       {/* Recommended Properties Section */}
-      <div className="max-w-7xl mx-auto px-4 py-16 sm:px-6 lg:px-8">
+      <div className="max-w-6xl mx-auto px-4 py-16 sm:px-6 lg:px-8">
         <h2 className="text-2xl font-bold mb-8">Recommended Listings</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {recommendedProperties.map((property) => (
