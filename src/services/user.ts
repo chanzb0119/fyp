@@ -1,6 +1,7 @@
 // src/services/user.ts
 import { supabase } from '@/lib/supabase/client';
 import { UserProfile } from '@/lib/types/database';
+import { uploadDocument } from './document-upload';
 
 export const userService = {
   async getUserProfileImageById(userId: string) {
@@ -93,5 +94,66 @@ export const userService = {
     }
 
     return true;
+  },
+
+  async applyForLandlord(userId: string, documentFile: File) {
+    if (!userId) {
+      throw new Error('User ID is required');
+    }
+  
+    try {
+      // First upload the document
+      const documentUrl = await uploadDocument(documentFile);
+  
+      // Then create the landlord application
+      const { data, error } = await supabase
+        .from('landlord_application')
+        .insert({
+          user_id: userId,
+          status: 'pending',
+          documents: documentUrl,
+          created_at: new Date().toISOString()
+        })
+        .select()
+        .single();
+  
+      if (error) {
+        throw error;
+      }
+  
+      return data;
+    } catch (error) {
+      console.error('Error in landlord application:', error);
+      throw error;
+    }
+  },
+
+  // Add to your userService in services/user.ts
+
+  async getLandlordApplicationStatus(userId: string) {
+    if (!userId) {
+      throw new Error('User ID is required');
+    }
+
+    const { data, error } = await supabase
+      .from('landlord_application')
+      .select('*')
+      .eq('user_id', userId)
+      .order('created_at', { ascending: false })
+      .limit(1)
+      .single();
+
+    if (error) {
+      if (error.code === 'PGRST116') {  // no rows returned
+        return null;
+      }
+      throw error;
+    }
+
+    return {
+      status: data.status,
+      createdAt: data.created_at,
+      documentUrl: data.documents
+    };
   }
 };

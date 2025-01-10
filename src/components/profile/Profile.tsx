@@ -16,6 +16,9 @@ import { Property, UserProfile } from '@/lib/types/database';
 import { propertyService } from '@/services/properties';
 import PropertyCard from '@/components/properties/PropertyCard';
 import { userService } from '@/services/user';
+import LandlordApplication from './LandlordApplication';
+import ApplicationStatus from './ApplicationStatus';
+import SuccessDialog from './SucessDialog';
 
 const ProfilePage = () => {
   const { data: session, status } = useSession();
@@ -26,6 +29,12 @@ const ProfilePage = () => {
   const [successMessage, setSuccessMessage] = useState('');
   const [userProperties, setUserProperties] = useState<Property[]>([]);
   const [wishlist, setWishlist] = useState<Property[]>([]);
+  const [showSuccessDialog, setShowSuccessDialog] = useState(false);
+  const [applicationStatus, setApplicationStatus] = useState<{
+    status: string;
+    createdAt: string;
+    documentUrl?: string;
+  } | null>(null);
 
   const [profileData, setProfileData] = useState<Partial<UserProfile>>({
     name: '',
@@ -46,6 +55,21 @@ const ProfilePage = () => {
         loadProfileData()
         loadUserProperties();
         loadWishlist();
+
+        const loadApplicationStatus = async () => {
+          if (session?.user?.id && profileData.role !== 'landlord') {
+            try {
+              const status = await userService.getLandlordApplicationStatus(session.user.id);
+              if (status) {
+                setApplicationStatus(status);
+              }
+            } catch (error) {
+              console.error('Error loading application status:', error);
+            }
+          }
+        };
+      
+        loadApplicationStatus();
     }
   }, [session, status, router]);
 
@@ -60,7 +84,8 @@ const ProfilePage = () => {
             email: userProfile.email || '',
             phone: userProfile.phone || '',
             profile_image: userProfile.profile_image || '',
-            role: userProfile.role || 'user',
+            //role: userProfile.role || 'user',
+            role: 'user',
             created_at: userProfile.created_at || '',
             updated_at: userProfile.updated_at || '',
             email_verified: userProfile.email_verified || false,
@@ -143,10 +168,12 @@ const ProfilePage = () => {
   return (
     <div className="max-w-6xl mx-auto px-4 py-8">
       <Tabs defaultValue={activeTab} className="w-full" onValueChange={setActiveTab}>
-        <TabsList className="grid w-full grid-cols-3 lg:w-[400px]">
+        <TabsList className="grid w-full grid-cols-3 lg:w-[550px]">
           <TabsTrigger value="profile">Profile</TabsTrigger>
           <TabsTrigger value="wishlist">Wishlist</TabsTrigger>
-          <TabsTrigger value="properties">My Properties</TabsTrigger>
+          <TabsTrigger value="properties">
+            {profileData.role === 'landlord' ? 'My Properties' : 'Become a Landlord'}
+          </TabsTrigger>
         </TabsList>
 
         <TabsContent value="profile">
@@ -273,24 +300,57 @@ const ProfilePage = () => {
         </TabsContent>
 
         <TabsContent value="properties">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {userProperties.map((property) => (
-              <PropertyCard imageUrl={property.images[0]} key={property.property_id} {...property} />
-            ))}
-            {userProperties.length === 0 && (
-              <div className="col-span-full text-center py-8">
-                <p className="text-gray-500">You haven&apos;t listed any properties yet.</p>
-                <Button
-                  onClick={() => router.push('/properties/create')}
-                  className="mt-4"
-                >
-                  Create Your First Listing
-                </Button>
+            {profileData.role === 'landlord' ? (
+              // Existing properties grid for landlords
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {userProperties.map((property) => (
+                  <PropertyCard imageUrl={property.images[0]} key={property.property_id} {...property} />
+                ))}
+                {userProperties.length === 0 && (
+                  <div className="col-span-full text-center py-8">
+                    <p className="text-gray-500">You haven&apos;t listed any properties yet.</p>
+                    <Button
+                      onClick={() => router.push('/properties/create')}
+                      className="mt-4"
+                    >
+                      Create Your First Listing
+                    </Button>
+                  </div>
+                )}
               </div>
-            )}
-          </div>
-        </TabsContent>
+            ) : applicationStatus ? (
+              // Show application status if user has applied
+              <ApplicationStatus {...applicationStatus} />
+            ) : (
+              // Landlord application section for regular users
+              <LandlordApplication 
+                onApply={async (documentFile) => {
+                  try {
+                    if(!profileData.user_id){
+                      throw new Error("Missing user id");
+                    }
+                    setIsLoading(true);
+                    await userService.applyForLandlord(profileData.user_id, documentFile);
+                    setShowSuccessDialog(true);
 
+                    const status = await userService.getLandlordApplicationStatus(profileData.user_id);
+                    setApplicationStatus(status);
+                  } catch (error) {
+                    console.error('Error applying for landlord:', error);
+                    setError('Failed to submit landlord application');
+                  } finally {
+                    setIsLoading(false);
+                  }
+                }}
+                isLoading={isLoading}
+              />
+            )}
+          </TabsContent>
+
+          <SuccessDialog 
+            isOpen={showSuccessDialog} 
+            onClose={() => setShowSuccessDialog(false)} 
+          />
         
       </Tabs>
     </div>
