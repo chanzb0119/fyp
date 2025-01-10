@@ -129,6 +129,17 @@ export const propertyService = {
     return data;
   },
 
+  async getPropertiesByUserId(user_id: string) {
+    const { data, error } = await supabase
+      .from('property')
+      .select('*')
+      .eq('user_id', user_id)
+      .order('created_at', { ascending: false });
+
+    if (error) throw error;
+    return data;
+  },
+
   async updateProperty(property_id: string, updates: Partial<Property>) {
     const { data, error } = await supabase
       .from('property')

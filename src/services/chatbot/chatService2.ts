@@ -1,5 +1,5 @@
 // src/services/chatService2.ts
-import { claude } from '@/services/claude';
+import { claude } from '@/services/chatbot/claude';
 
 export interface Message2 {
   id: string;

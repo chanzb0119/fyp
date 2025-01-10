@@ -6,7 +6,7 @@ import React from 'react';
 import { Bed, Bath, Square, MapPin, Car, Calendar } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useUser } from '@/hooks/useUser';
+import { useSession } from 'next-auth/react';
 
 interface PropertyCardProps {
   property_id: string;
@@ -39,9 +39,9 @@ const PropertyCard = ({
   user_id,
   created_at
 }: PropertyCardProps) => {
-  const { user } = useUser();
-
-  const isOwner = user?.id === user_id;
+  const { data: session } = useSession();
+  const isOwner = session?.user.id === user_id;
+  
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     return date.toLocaleString('en-GB', {

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from 'react';
-import { chatService } from '@/services/chatService';
+import { chatService } from '@/services/chatbot/chatService';
 import { X, MessageCircle } from 'lucide-react';
 import Image from 'next/image';
 import { Property } from '@/lib/types/database';

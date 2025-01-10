@@ -1,7 +1,7 @@
 "use client";
 // src\components\layout\MainLayout.tsx
 
-import React, { ReactNode, useState } from 'react';
+import React, { ReactNode, useEffect, useState } from 'react';
 import { Home, Plus, User, Store, ChevronDown } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -13,6 +13,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { userService } from '@/services/user';
 
 interface MainLayoutProps {
   children: ReactNode;
@@ -22,6 +23,23 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
   const { data: session, status } = useSession();
   const router = useRouter();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [profileImage, setProfileImage] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchProfileImage = async () => {
+      if (session?.user?.id) {
+        try {
+          const userData = await userService.getUserById(session.user.id);
+          setProfileImage(userData.profile_image || null);
+        } catch (error) {
+          console.error('Error fetching profile image:', error);
+        }
+      }
+    };
+
+    fetchProfileImage();
+  }, [session?.user?.id]);
+
 
   const handleLogout = async () => {
     try {
@@ -31,6 +49,30 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
       console.error('Logout error:', error);
     }
   };
+
+  const renderProfileImage = () => {
+    if (profileImage) {
+      return (
+        <div className="h-10 w-10 relative rounded-full overflow-hidden">
+          <Image
+            src={profileImage}
+            alt="Profile"
+            fill
+            className="object-cover"
+          />
+        </div>
+      );
+    }
+
+    return (
+      <div className="h-10 w-10 rounded-full bg-blue-600 flex items-center justify-center">
+        <span className="text-white text-sm">
+          {session?.user?.email?.[0]?.toUpperCase()}
+        </span>
+      </div>
+    );
+  };
+  
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -72,22 +114,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
                   <div className="flex items-center space-x-4 ml-4 pl-4 border-l border-gray-200"> 
                     <DropdownMenu onOpenChange={setIsDropdownOpen}>
                       <DropdownMenuTrigger className="flex items-center space-x-2 focus:outline-none group">
-                        {session.user.image ? (
-                          <div className="h-10 w-10 relative rounded-full overflow-hidden">
-                            <Image
-                              src={session.user.image}
-                              alt="Profile"
-                              fill
-                              className="object-cover"
-                            />
-                          </div>
-                        ) : (
-                          <div className="h-10 w-10 rounded-full bg-blue-600 flex items-center justify-center">
-                            <span className="text-white text-sm">
-                              {session.user.email?.[0]?.toUpperCase()}
-                            </span>
-                          </div>
-                        )}
+                        {renderProfileImage()}
                         <ChevronDown 
                           className={`h-4 w-4 text-gray-600 transition-transform duration-200 ease-in-out ${
                             isDropdownOpen ? 'rotate-180' : ''

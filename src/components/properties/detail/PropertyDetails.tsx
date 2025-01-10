@@ -13,7 +13,6 @@ import {
 import PropertyMap from './PropertyMap';
 import Description from './Description';
 import ImageGallery from './ImageGallery';
-import PropertyCard from '../PropertyCard';
 import { format } from 'date-fns';
 import StickyActions from './StickyAction';
 import RecommendedProperties from './RecommendedProperty';

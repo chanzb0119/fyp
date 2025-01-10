@@ -25,8 +25,8 @@ export interface Property {
   export interface UserProfile {
     user_id: string;
     email: string;
-    name: string | null;
-    phone: string | null;
+    name: string;
+    phone: string;
     profile_image: string | null;
     role: 'user' | 'landlord' | 'admin';
     password: string;  // Will store hashed password

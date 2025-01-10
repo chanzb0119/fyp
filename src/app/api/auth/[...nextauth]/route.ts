@@ -21,7 +21,7 @@ const handler = NextAuth({
       },
       async authorize(credentials) {
         if (!credentials?.email || !credentials?.password) {
-          return null;
+          throw new Error('Please enter your email and password');
         }
 
         try {
@@ -37,9 +37,11 @@ const handler = NextAuth({
             role: user.role,
             image: user.profile_image
           };
-        } catch (error) {
-          console.error('Auth error:', error);
-          return null;
+        } catch (error: any) {
+            if (error.message === 'Please verify your email before logging in') {
+              throw new Error('Please verify your email before logging in');
+            }
+            throw new Error('Invalid email or password');
         }
       }
     })
@@ -124,6 +126,7 @@ const handler = NextAuth({
   },
   session: {
     strategy: 'jwt',
+    maxAge: 24 * 60 * 60, 
   },
 });
 

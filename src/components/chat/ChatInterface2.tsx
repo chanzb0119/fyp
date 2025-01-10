@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from 'react';
-import { chatService2 } from '@/services/chatService2';
+import { chatService2 } from '@/services/chatbot/chatService2';
 import { X } from 'lucide-react';
 import { MessageCircle } from 'lucide-react';
 

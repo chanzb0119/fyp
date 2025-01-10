@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Card, CardHeader, CardContent, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -9,10 +9,16 @@ import { Label } from '@/components/ui/label';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Home } from 'lucide-react';
 import GoogleIcon from './google';
-import { signIn } from 'next-auth/react';
+import { signIn, useSession } from 'next-auth/react';
 
 const Login = () => {
   const router = useRouter();
+  const { status } = useSession();
+  useEffect(() => {
+    if (status === "authenticated") {
+      router.push('/');
+    }
+  }, [status, router]);
   const searchParams = useSearchParams();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
@@ -48,7 +54,7 @@ const Login = () => {
       });
 
       if (result?.error) {
-        setError('Invalid email or password');
+        setError(result.error);
       } else {
         router.push('/');
         router.refresh();
