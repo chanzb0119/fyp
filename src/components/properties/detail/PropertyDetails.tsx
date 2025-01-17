@@ -21,7 +21,7 @@ interface PropertyDetailsProps {
   property: {
     latitude: number | undefined;
     longitude: number | undefined;
-    id: string;
+    property_id: string;
     title: string;
     type: string;
     price: number;
@@ -130,6 +130,7 @@ const PropertyDetails = ({ property }: PropertyDetailsProps) => {
         {/* Sticky Sidebar */}
         <div className="lg:col-span-1">
           <StickyActions
+            propertyId={property.property_id}
             price={property.price}
             ownerId={property.user_id}
           />
@@ -138,7 +139,7 @@ const PropertyDetails = ({ property }: PropertyDetailsProps) => {
 
       {/* Recommended Properties */}
       <RecommendedProperties 
-        propertyId={property.id}
+        propertyId={property.property_id}
         userId={undefined} // TODO: Pass the current user's ID from session
       />
     </div>

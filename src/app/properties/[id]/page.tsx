@@ -32,7 +32,6 @@ export default async function PropertyPage({ params }: Props) {
     return (
       <>
         <PropertyDetails property={property} />
-        { CHAT_INTERFACE == 1 ? (<><ChatInterface mode={'property_details'} propertyId={id}/></>) : (<><ChatInterface2/></>)}
       </>);
   } catch (error) {
     console.error(error);

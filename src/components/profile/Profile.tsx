@@ -109,7 +109,14 @@ const ProfilePage = () => {
   };
 
   const loadWishlist = async () => {
-    // TODO: Implement wishlist loading
+      try {
+        if(session?.user.id){
+            const wishlists = await userService.getWishlist(session.user.id);
+            setWishlist(wishlists);
+        }      
+    } catch (error) {
+      console.error('Error loading properties:', error);
+    }
   };
 
   const handleProfileUpdate = async (e: React.FormEvent) => {

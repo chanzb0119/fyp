@@ -87,13 +87,32 @@ export const userService = {
       .from('wishlist')
       .delete()
       .eq('user_id', userId)
-      .eq('property_id', propertyId);
+      .eq('property_id', propertyId)
+      .single();
 
     if (error) {
       throw error;
     }
 
     return true;
+  },
+
+  async checkWishlistStatus(userId: string, propertyId: string) {
+    const { data, error } = await supabase
+      .from('wishlist')
+      .select('wishlist_id')
+      .eq('user_id', userId)
+      .eq('property_id', propertyId);
+
+    if (error) {
+      throw error;
+    }
+
+    if(data.length == 0){
+      return false;
+    } else {
+      return true;
+    }
   },
 
   async applyForLandlord(userId: string, documentFile: File) {

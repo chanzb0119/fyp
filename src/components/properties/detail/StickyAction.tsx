@@ -8,15 +8,22 @@ import { userService } from '@/services/user';
 import { useEffect, useState } from 'react';
 import { UserProfile } from '@/lib/types/database';
 import { Skeleton } from '@/components/ui/skeleton';
+import { useSession } from 'next-auth/react';
+import ReportDialog from './ReportDialog';
 
 interface StickyActionsProps {
+  propertyId: string;
   price: number;
   ownerId: string;
 }
 
-const StickyActions = ({ price, ownerId }: StickyActionsProps) => {
+const StickyActions = ({ propertyId, price, ownerId }: StickyActionsProps) => {
   const [owner, setOwner] = useState<Partial<UserProfile> | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const { data: session } = useSession();
+  const isUser = session?.user.id != null;
+  const [isLiked, setIsLiked] = useState(false);
+  const [showReportDialog, setShowReportDialog] = useState(false);
 
   useEffect(() => {
     const fetchOwner = async () => {
@@ -29,18 +36,28 @@ const StickyActions = ({ price, ownerId }: StickyActionsProps) => {
         setIsLoading(false);
       }
     };
-
     fetchOwner();
+    const checkWishlistStatus = async () => {
+      if(isUser){
+        const data = await userService.checkWishlistStatus(session.user.id, propertyId);
+        setIsLiked(data);
+      }
+    }
+    checkWishlistStatus();
+    
   }, [ownerId]);
 
   const handleAddToWishlist = () => {
+    if(isUser){
+      if(!isLiked){
+        userService.addToWishlist(session.user.id, propertyId);
+      } else {
+        userService.removeFromWishlist(session.user.id, propertyId);
+      }
+      setIsLiked(!isLiked);
+    }
     // TODO: Implement wishlist functionality
     console.log('Add to wishlist');
-  };
-
-  const handleReport = () => {
-    // TODO: Implement report functionality
-    console.log('Report property');
   };
 
   const handleContact = () => {
@@ -55,6 +72,7 @@ const StickyActions = ({ price, ownerId }: StickyActionsProps) => {
   };
 
   return (
+    <>
     <div className="bg-white rounded-lg shadow-sm p-6 space-y-6 sticky top-8">
       {/* Price */}
       <div className="text-center pb-6 border-b">
@@ -102,8 +120,21 @@ const StickyActions = ({ price, ownerId }: StickyActionsProps) => {
           variant="outline"
           className="w-full flex items-center justify-center gap-2"
         >
-          <Heart className="w-4 h-4" />
+          {!isLiked?
+          (
+          <>
+          <Heart className="w-4 h-4"/>
           Add to Wishlist
+          </>
+          ) : 
+          (
+            <>
+            <Heart className="w-4 h-4" fill='red'/>
+            Remove from Wishlist
+            </>
+          )
+          }
+          
         </Button>
         
         <Button
@@ -116,7 +147,7 @@ const StickyActions = ({ price, ownerId }: StickyActionsProps) => {
         </Button>
         
         <Button
-          onClick={handleReport}
+          onClick={() => setShowReportDialog(true)}
           variant="outline"
           className="w-full flex items-center justify-center gap-2 text-red-600 hover:text-red-700 border-red-200 hover:border-red-300"
         >
@@ -125,6 +156,15 @@ const StickyActions = ({ price, ownerId }: StickyActionsProps) => {
         </Button>
       </div>
     </div>
+
+    <ReportDialog
+        isOpen={showReportDialog}
+        onClose={() => setShowReportDialog(false)}
+        propertyId={propertyId}
+        userId={session?.user?.id}
+      />
+
+  </>
   );
 };
 
