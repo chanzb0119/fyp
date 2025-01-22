@@ -1,3 +1,5 @@
+//src\components\profile\Profile.tsx
+
 "use client";
 
 import React, { useState, useEffect } from 'react';
@@ -84,8 +86,8 @@ const ProfilePage = () => {
             email: userProfile.email || '',
             phone: userProfile.phone || '',
             profile_image: userProfile.profile_image || '',
-            //role: userProfile.role || 'user',
-            role: 'user',
+            role: userProfile.role || 'user',
+            //role: 'user',
             created_at: userProfile.created_at || '',
             updated_at: userProfile.updated_at || '',
             email_verified: userProfile.email_verified || false,
@@ -325,7 +327,7 @@ const ProfilePage = () => {
                   </div>
                 )}
               </div>
-            ) : applicationStatus ? (
+            ) : applicationStatus && applicationStatus.status === 'pending' ?(
               // Show application status if user has applied
               <ApplicationStatus {...applicationStatus} />
             ) : (
@@ -350,6 +352,7 @@ const ProfilePage = () => {
                   }
                 }}
                 isLoading={isLoading}
+                previousApplication={applicationStatus}
               />
             )}
           </TabsContent>

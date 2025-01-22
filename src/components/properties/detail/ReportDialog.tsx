@@ -1,3 +1,5 @@
+//src\components\properties\detail\ReportDialog.tsx
+
 import React from 'react';
 import { useState } from 'react';
 import {
@@ -20,7 +22,6 @@ import {
 } from "@/components/ui/select";
 import { AlertCircle } from 'lucide-react';
 import { supabase } from '@/lib/supabase/client';
-import { v4 as uuidv4 } from 'uuid';
 
 interface ReportDialogProps {
   isOpen: boolean;

@@ -147,32 +147,36 @@ export const userService = {
     }
   },
 
-  // Add to your userService in services/user.ts
 
   async getLandlordApplicationStatus(userId: string) {
     if (!userId) {
       throw new Error('User ID is required');
     }
-
-    const { data, error } = await supabase
-      .from('landlord_application')
-      .select('*')
-      .eq('user_id', userId)
-      .order('created_at', { ascending: false })
-      .limit(1)
-      .single();
-
-    if (error) {
-      if (error.code === 'PGRST116') {  // no rows returned
-        return null;
+  
+    try {
+      const { data, error } = await supabase
+        .from('landlord_application')
+        .select('*')
+        .eq('user_id', userId)
+        .order('created_at', { ascending: false })
+        .limit(1)
+        .single();
+  
+      if (error) {
+        if (error.code === 'PGRST116') {  // no rows returned
+          return null;
+        }
+        throw error;
       }
-      throw error;
+  
+      return {
+        status: data.status,
+        createdAt: data.created_at,
+        documentUrl: data.documents
+      };
+    } catch (error) {
+      console.error('Error fetching landlord application status:', error);
+      return null;
     }
-
-    return {
-      status: data.status,
-      createdAt: data.created_at,
-      documentUrl: data.documents
-    };
   }
 };
