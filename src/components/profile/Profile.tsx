@@ -70,6 +70,7 @@ const ProfilePage = () => {
             }
           }
         };
+        
       
         loadApplicationStatus();
     }

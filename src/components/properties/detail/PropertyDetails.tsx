@@ -140,7 +140,7 @@ const PropertyDetails = ({ property }: PropertyDetailsProps) => {
       {/* Recommended Properties */}
       <RecommendedProperties 
         propertyId={property.property_id}
-        userId={undefined} // TODO: Pass the current user's ID from session
+        userId={""} // TODO: Pass the current user's ID from session
       />
     </div>
   );

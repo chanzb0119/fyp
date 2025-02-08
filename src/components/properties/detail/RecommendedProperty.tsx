@@ -1,131 +1,84 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import PropertyCard from '../PropertyCard';
-
-interface RecommendedProperty {
-  property_id: string;
-  title: string;
-  price: number;
-  beds: number;
-  bathrooms: number;
-  carparks: number;
-  size: number;
-  state: string;
-  city: string;
-  type: string;
-  imageUrl: string;
-  user_id: string;
-  created_at: string;
-}
+import { Property } from '@/lib/types/database';
+import { recommendationService } from '@/services/recommendations';
 
 interface RecommendedPropertiesProps {
-  propertyId: string;  // Current property ID for content-based filtering
-  userId?: string;     // Current user ID for collaborative filtering
+  propertyId: string;
+  userId?: string;
 }
 
 const RecommendedProperties = ({ propertyId, userId }: RecommendedPropertiesProps) => {
-  // TODO: Replace with actual API call using propertyId and userId
-  const dummyProperties = [
-    {
-      property_id: '1',
-      title: 'Modern Apartment in City Center',
-      price: 2500,
-      beds: 3,
-      bathrooms: 2,
-      carparks: 1,
-      size: 1200,
-      state: 'Selangor',
-      city: 'Petaling Jaya',
-      type: 'Apartment',
-      imageUrl: 'https://znoujhfvqhcxwjlafcvf.supabase.co/storage/v1/object/public/property-images/property-images/3ee50ace-4d3a-4d4f-bc2e-57c0cf93296c.jpg',
-      user_id: '123',
-      created_at: '2024-01-01'
-    },
-    {
-        property_id: '2',
-        title: 'Modern Apartment in City Center',
-        price: 2500,
-        beds: 3,
-        bathrooms: 2,
-        carparks: 1,
-        size: 1200,
-        state: 'Selangor',
-        city: 'Petaling Jaya',
-        type: 'Apartment',
-        imageUrl: 'https://znoujhfvqhcxwjlafcvf.supabase.co/storage/v1/object/public/property-images/property-images/5df9e366-908f-4057-9c52-8f616b8b526e.jpg',
-        user_id: '123',
-        created_at: '2024-01-01'
-      },
-      {
-        property_id: '3',
-        title: 'Modern Apartment in City Center',
-        price: 2500,
-        beds: 3,
-        bathrooms: 2,
-        carparks: 1,
-        size: 1200,
-        state: 'Selangor',
-        city: 'Petaling Jaya',
-        type: 'Apartment',
-        imageUrl: 'https://znoujhfvqhcxwjlafcvf.supabase.co/storage/v1/object/public/property-images/property-images/4167cd0f-a32c-44a2-8789-1cab30c8eec6.jpg',
-        user_id: '123',
-        created_at: '2024-01-01'
-      },
-      {
-        property_id: '4',
-        title: 'Modern Apartment in City Center4',
-        price: 2500,
-        beds: 3,
-        bathrooms: 2,
-        carparks: 1,
-        size: 1200,
-        state: 'Selangor',
-        city: 'Petaling Jaya',
-        type: 'Apartment',
-        imageUrl: 'https://znoujhfvqhcxwjlafcvf.supabase.co/storage/v1/object/public/property-images/property-images/3ee50ace-4d3a-4d4f-bc2e-57c0cf93296c.jpg',
-        user_id: '123',
-        created_at: '2024-01-01'
-      },
-      {
-          property_id: '5',
-          title: 'Modern Apartment in City Center5',
-          price: 2500,
-          beds: 3,
-          bathrooms: 2,
-          carparks: 1,
-          size: 1200,
-          state: 'Selangor',
-          city: 'Petaling Jaya',
-          type: 'Apartment',
-          imageUrl: 'https://znoujhfvqhcxwjlafcvf.supabase.co/storage/v1/object/public/property-images/property-images/5df9e366-908f-4057-9c52-8f616b8b526e.jpg',
-          user_id: '123',
-          created_at: '2024-01-01'
-        },
-        {
-          property_id: '6',
-          title: 'Modern Apartment in City Center6',
-          price: 2500,
-          beds: 3,
-          bathrooms: 2,
-          carparks: 1,
-          size: 1200,
-          state: 'Selangor',
-          city: 'Petaling Jaya',
-          type: 'Apartment',
-          imageUrl: 'https://znoujhfvqhcxwjlafcvf.supabase.co/storage/v1/object/public/property-images/property-images/4167cd0f-a32c-44a2-8789-1cab30c8eec6.jpg',
-          user_id: '123',
-          created_at: '2024-01-01'
-        },
-      
-    
-  ];
-
+  const [properties, setProperties] = useState<Property[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [activeSlide, setActiveSlide] = useState(0);
   const [isAnimating, setIsAnimating] = useState(false);
+  
   const propertiesPerView = 3;
-  const totalSlides = Math.ceil(dummyProperties.length / propertiesPerView);
+  const totalSlides = Math.ceil(properties.length / propertiesPerView);
+
+  // Helper function to parse images array
+  const parseImages = (property: any): Property => {
+    try {
+      // Check if images is a string and needs parsing
+      const images = typeof property.images === 'string' 
+        ? JSON.parse(property.images)
+        : property.images || [];
+
+      return {
+        ...property,
+        images: Array.isArray(images) ? images : []
+      };
+    } catch (e) {
+      console.error('Error parsing images:', e);
+      return {
+        ...property,
+        images: []
+      };
+    }
+  };
+
+  useEffect(() => {
+    const loadRecommendations = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+
+        let recommendedProperties: Property[];
+
+        if (propertyId) {
+          const response = await recommendationService.getContentBasedRecommendations(
+            propertyId,
+            6
+          );
+          // Parse images for each property
+          recommendedProperties = response.map(parseImages);
+        } else if (userId) {
+          const response = await recommendationService.getCollaborativeRecommendations(
+            userId,
+            6
+          );
+          // Parse images for each property
+          recommendedProperties = response.map(parseImages);
+        } else {
+          throw new Error('Either propertyId or userId must be provided');
+        }
+
+        setProperties(recommendedProperties);
+      } catch (err) {
+        console.error('Error loading recommendations:', err);
+        setError('Failed to load recommendations');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadRecommendations();
+  }, [propertyId, userId]);
 
   const handleNext = () => {
     if (isAnimating || activeSlide >= totalSlides - 1) return;
@@ -140,6 +93,41 @@ const RecommendedProperties = ({ propertyId, userId }: RecommendedPropertiesProp
     setActiveSlide(prev => prev - 1);
     setTimeout(() => setIsAnimating(false), 500);
   };
+
+  if (loading) {
+    return (
+      <div className="mt-12">
+        <h2 className="text-2xl font-semibold mb-6">Other properties you may interest</h2>
+        <div className="grid grid-cols-3 gap-6">
+          {[1, 2, 3].map((i) => (
+            <div key={i} className="animate-pulse">
+              <div className="bg-gray-200 h-48 rounded-lg mb-4"></div>
+              <div className="h-4 bg-gray-200 rounded w-3/4 mb-2"></div>
+              <div className="h-4 bg-gray-200 rounded w-1/2"></div>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="mt-12">
+        <h2 className="text-2xl font-semibold mb-6">Other properties you may interest</h2>
+        <div className="text-center py-8 text-red-500">{error}</div>
+      </div>
+    );
+  }
+
+  if (!properties.length) {
+    return (
+      <div className="mt-12">
+        <h2 className="text-2xl font-semibold mb-6">Other properties you may interest</h2>
+        <div className="text-center py-8 text-gray-500">No recommendations available</div>
+      </div>
+    );
+  }
 
   return (
     <div className="mt-12">
@@ -180,14 +168,17 @@ const RecommendedProperties = ({ propertyId, userId }: RecommendedPropertiesProp
                 key={slideIndex} 
                 className="w-full flex-none grid grid-cols-3 gap-6"
               >
-                {dummyProperties
+                {properties
                   .slice(slideIndex * propertiesPerView, (slideIndex + 1) * propertiesPerView)
                   .map((property) => (
                     <div
                       key={property.property_id}
                       className="w-full"
                     >
-                      <PropertyCard {...property} />
+                      <PropertyCard 
+                        {...property} 
+                        imageUrl={property.images?.[0] || '/api/placeholder/400/300'} 
+                      />
                     </div>
                   ))}
               </div>
