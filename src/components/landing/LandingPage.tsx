@@ -1,12 +1,13 @@
 // src\components\landing\LandingPage.tsx
 "use client";
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import PropertyCard from '@/components/properties/PropertyCard';
 import { useRouter } from 'next/navigation';
 import { Search } from 'lucide-react';
+import { useSession } from 'next-auth/react';
 
 export default function LandingPage() {
   const recommendedProperties = [
@@ -34,6 +35,7 @@ export default function LandingPage() {
   ];
   
   const router = useRouter();
+  const { data: session } = useSession();
   const [searchParams, setSearchParams] = React.useState({
     state: '',
     searchTerm: '',
@@ -43,6 +45,12 @@ export default function LandingPage() {
     builtUpSize: '',
     bedrooms: ''
   });
+
+  useEffect(() => {
+      if (session?.user.role === "admin") {
+        router.push('/admin');
+      }
+    }, [session, router]);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
