@@ -46,7 +46,7 @@ const PropertyDetails = ({ property }: PropertyDetailsProps) => {
   const formattedDate = format(new Date(property.created_at), 'MMMM d, yyyy');
 
   return (
-    <div className="max-w-7xl mx-auto sm:px-6 lg:px-8 pb-12">
+    <div className="max-w-7xl sm:px-6 lg:px-28">
       {/* Image Gallery */}
       <ImageGallery images={property.images} title={property.title} />
 

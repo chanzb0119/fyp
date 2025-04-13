@@ -31,7 +31,7 @@ const ImageGallery = ({ images, title }: { images: string[], title: string }) =>
 
   return (
     <div className="max-w-4xl mx-auto mb-8"> {/* Reduced max width */}
-      <div className="relative aspect-[16/9] bg-gray-100 rounded-2xl overflow-hidden">
+      <div className="relative aspect-[4/3] bg-gray-100 rounded-2xl overflow-hidden">
         {images.length > 0 ? (
           <div className="relative w-full h-full">
             {/* Current Image */}

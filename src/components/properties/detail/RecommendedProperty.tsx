@@ -4,7 +4,6 @@ import React, { useState, useEffect } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import PropertyCard from '../PropertyCard';
 import { Property } from '@/lib/types/database';
-import { recommendationService } from '@/services/recommendations';
 
 interface RecommendedPropertiesProps {
   propertyId: string;
@@ -239,7 +238,7 @@ const RecommendedProperties = ({ propertyId, userId }: RecommendedPropertiesProp
   }
 
   return (
-    <div className="mt-12">
+    <div className="mt-12 px-12">
       <h2 className="text-2xl font-semibold mb-6">Other properties you may interest</h2>
       
       <div className="relative px-4">
