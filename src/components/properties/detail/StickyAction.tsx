@@ -45,7 +45,7 @@ const StickyActions = ({ propertyId, price, ownerId }: StickyActionsProps) => {
     }
     checkWishlistStatus();
     
-  }, [ownerId]);
+  }, [isUser, ownerId, propertyId, session?.user.id]);
 
   const handleAddToWishlist = () => {
     if(isUser){

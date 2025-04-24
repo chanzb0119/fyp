@@ -23,7 +23,7 @@ const PropertiesView = () => {
     });
 
     // Current sort value
-    const [sortValue, setSortValue] = React.useState(
+    const [sortValue] = React.useState(
         searchParams.get('sort') || 'default'
     );
 

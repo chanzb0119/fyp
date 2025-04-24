@@ -24,7 +24,7 @@ import { Badge } from '@/components/ui/badge';
 import { supabase } from '@/lib/supabase/client';
 import { format } from 'date-fns';
 import { FileText, CheckCircle, XCircle } from 'lucide-react';
-import { userService } from '@/services/user';
+
 
 interface LandlordApplication {
   app_id: string;

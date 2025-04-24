@@ -5,14 +5,12 @@ import PropertyDetails from '@/components/properties/detail/PropertyDetails';
 
 
 interface Props {
-  params: {
-    id: string;
-  };
+  params: { id: string };
 }
 
 export default async function PropertyPage({ params }: Props) {
   try {
-    const { id } = await params
+    const { id } =  params
     const property = await propertyService.getPropertyById(id);
     
     if (!property) {

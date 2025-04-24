@@ -27,7 +27,6 @@ import {
   Eye,
   Trash2,
   CheckCircle,
-  Image as ImageIcon
 } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Link from 'next/link';

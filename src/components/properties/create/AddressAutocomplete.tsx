@@ -62,6 +62,7 @@ const AddressAutocomplete = ({ onSelect }: AddressAutocompleteProps) => {
         longitude: lng
       };
 
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       addressComponents.forEach((component: any) => {
         const types = component.types;
         if (types.includes('administrative_area_level_1')) {

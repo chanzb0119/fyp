@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 //src\components\properties\create\PropertyForm.tsx
 
 "use client";  

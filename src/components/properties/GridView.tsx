@@ -59,7 +59,7 @@ const GridView: React.FC<GridViewProps> = ({ filters, currentPage }) => {
         };
 
         loadProperties();
-    }, [searchParams]); // Only depend on searchParams instead of filters and currentPage
+    }, [currentPage, filters, router, searchParams]); // Only depend on searchParams instead of filters and currentPage
 
     // Handle page change
     const handlePageChange = (newPage: number) => {
