@@ -5,7 +5,9 @@ export async function POST(req: NextRequest) {
   try {
     const { propertyId, limit = 5 } = await req.json();
     // Call your FastAPI similar properties endpoint with query parameters
-    const url = new URL('http://localhost:8000/similar-properties/');
+    const url = new URL('https://property-recommender-api.onrender.com/similar-properties');
+    // const url = new URL('http://localhost:8000/similar-properties');
+    
     url.searchParams.append('property_id', propertyId);
     url.searchParams.append('top_n', limit.toString());
     

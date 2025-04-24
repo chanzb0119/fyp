@@ -10,7 +10,7 @@ interface Props {
 
 export default async function PropertyPage({ params }: Props) {
   try {
-    const { id } =  params
+    const { id } =  await params
     const property = await propertyService.getPropertyById(id);
     
     if (!property) {

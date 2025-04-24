@@ -6,7 +6,8 @@ export async function POST(req: NextRequest) {
     const { userId, limit = 10 } = await req.json();
 
     // Call your FastAPI similar properties endpoint with query parameters
-    const url = new URL('http://localhost:8000/recommend/');
+    const url = new URL('https://property-recommender-api.onrender.com/recommend');
+    // const url = new URL('http://localhost:8000/recommend');
     url.searchParams.append('user_id', userId);
     url.searchParams.append('top_n', limit.toString());
     url.searchParams.append('alpha', '0.7');

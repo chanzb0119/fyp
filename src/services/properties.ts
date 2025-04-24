@@ -160,5 +160,18 @@ export const propertyService = {
 
     if (error) throw error;
     return true;
+  },
+
+  async getRandomProperties(count: number = 3): Promise<Property[]> {
+    const { data, error } = await supabase
+      .rpc('get_random_properties', { limit_count: count }); // Call the function
+  
+    if (error) {
+      console.error("Error fetching random properties:", error); // Log the error for better debugging
+      throw error; // Re-throw the error to handle it upstream
+    }
+  
+    // The data returned by rpc might be null if the function returns no rows
+    return data || [];
   }
 };

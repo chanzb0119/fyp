@@ -16,78 +16,13 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { Property } from '@/lib/types/database';
 import PropertyCard from '../properties/PropertyCard';
+import { propertyService } from '@/services/properties';
 
-// Sample data - Replace with API calls later
-// const RECOMMENDED_PROPERTIES :Property[] = [
-//   {
-//     property_id: '1',
-//     created_at: '2025-03-04 00:00:00+00',
-//     title: 'Central Residence @ Sungai Besi, Taman Tasik Pinggiran, Sungai Besi',
-//     type: 'Apartment',
-//     price: 2800,
-//     beds: 3,
-//     bathrooms: 2,
-//     carparks: 4,
-//     size: 1121,
-//     description: '',
-//     address: '',
-//     state: 'Kuala Lumpur',
-//     city: 'Sungai Besi',
-//     amenities: [],
-//     user_id: '777650f9-70a4-4a50-bed0-52cd8dc7099e',
-//     images: ["https://img.iproperty.com.my/my-iproperty/premium/486x492-crop/w-mj9k0aed862f-1192-4a5b-a714-27ec27599ac4_2560x1920.jpeg","https://img.iproperty.com.my/my-iproperty/premium/486x492-crop/w-1bymc77c155c-d7c2-4b70-b6d5-a3a9cbda145c_2560x1920.jpeg","https://img.iproperty.com.my/my-iproperty/premium/3840x100000-fit/w-yvay123e7dd0-a8b6-41dc-bd62-392d62c3b35d_2560x1920.jpeg","https://img.iproperty.com.my/my-iproperty/premium/486x492-crop/w-mj9k0aed862f-1192-4a5b-a714-27ec27599ac4_2560x1920.jpeg","https://img.iproperty.com.my/my-iproperty/premium/486x492-crop/w-1bymc77c155c-d7c2-4b70-b6d5-a3a9cbda145c_2560x1920.jpeg"],
-//     latitude: 0,
-//     longitude: 0,
-//     furnishing: ''
-//   },
-//   {
-//     property_id: '2',
-//     created_at: '2025-03-04 00:00:00+00',
-//     title: 'Central Residence @ Sungai Besi, Taman Tasik Pinggiran, Sungai Besi',
-//     type: 'Apartment',
-//     price: 2800,
-//     beds: 3,
-//     bathrooms: 2,
-//     carparks: 4,
-//     size: 1121,
-//     description: '',
-//     address: '',
-//     state: 'Kuala Lumpur',
-//     city: 'Sungai Besi',
-//     amenities: [],
-//     user_id: '777650f9-70a4-4a50-bed0-52cd8dc7099e',
-//     images: ["https://img.iproperty.com.my/my-iproperty/premium/486x492-crop/w-mj9k0aed862f-1192-4a5b-a714-27ec27599ac4_2560x1920.jpeg","https://img.iproperty.com.my/my-iproperty/premium/486x492-crop/w-1bymc77c155c-d7c2-4b70-b6d5-a3a9cbda145c_2560x1920.jpeg","https://img.iproperty.com.my/my-iproperty/premium/3840x100000-fit/w-yvay123e7dd0-a8b6-41dc-bd62-392d62c3b35d_2560x1920.jpeg","https://img.iproperty.com.my/my-iproperty/premium/486x492-crop/w-mj9k0aed862f-1192-4a5b-a714-27ec27599ac4_2560x1920.jpeg","https://img.iproperty.com.my/my-iproperty/premium/486x492-crop/w-1bymc77c155c-d7c2-4b70-b6d5-a3a9cbda145c_2560x1920.jpeg"],
-//     latitude: 0,
-//     longitude: 0,
-//     furnishing: ''
-//   },
-//   {
-//     property_id: '3',
-//     created_at: '2025-03-04 00:00:00+00',
-//     title: 'Central Residence @ Sungai Besi, Taman Tasik Pinggiran, Sungai Besi',
-//     type: 'Apartment',
-//     price: 2800,
-//     beds: 3,
-//     bathrooms: 2,
-//     carparks: 4,
-//     size: 1121,
-//     description: '',
-//     address: '',
-//     state: 'Kuala Lumpur',
-//     city: 'Sungai Besi',
-//     amenities: [],
-//     user_id: '777650f9-70a4-4a50-bed0-52cd8dc7099e',
-//     images: ["https://img.iproperty.com.my/my-iproperty/premium/486x492-crop/w-mj9k0aed862f-1192-4a5b-a714-27ec27599ac4_2560x1920.jpeg","https://img.iproperty.com.my/my-iproperty/premium/486x492-crop/w-1bymc77c155c-d7c2-4b70-b6d5-a3a9cbda145c_2560x1920.jpeg","https://img.iproperty.com.my/my-iproperty/premium/3840x100000-fit/w-yvay123e7dd0-a8b6-41dc-bd62-392d62c3b35d_2560x1920.jpeg","https://img.iproperty.com.my/my-iproperty/premium/486x492-crop/w-mj9k0aed862f-1192-4a5b-a714-27ec27599ac4_2560x1920.jpeg","https://img.iproperty.com.my/my-iproperty/premium/486x492-crop/w-1bymc77c155c-d7c2-4b70-b6d5-a3a9cbda145c_2560x1920.jpeg"],
-//     latitude: 0,
-//     longitude: 0,
-//     furnishing: ''
-//   }
-// ];
 
 const POPULAR_LOCATIONS = [
-  { name: 'Kuala Lumpur', count: 253, image: '/api/placeholder/220/140' },
-  { name: 'Perak', count: 184, image: '/api/placeholder/220/140' },
-  { name: 'Johor', count: 176, image: '/api/placeholder/220/140' },
+  { name: 'Kuala Lumpur', count: 253, image: 'https://img.iproperty.com.my/my-iproperty/premium/486x492-crop/w-rgfa299cbef4-6f15-4312-b099-6fa7a4dff8b2_810x1080.jpeg' },
+  { name: 'Perak', count: 184, image: 'https://img.iproperty.com.my/my-iproperty/premium/486x492-crop/w-99szcfe61b36-23b2-4abb-b50d-c06bd5a98ad8_1280x960.jpeg' },
+  { name: 'Johor', count: 176, image: 'https://img.iproperty.com.my/my-iproperty/premium/486x492-crop/w-flck7c04206e-aaaf-44e8-97d3-c5af0c6d0a9e_768x1024.jpeg' },
 ];
 
 const PROPERTY_TYPES = [
@@ -96,7 +31,8 @@ const PROPERTY_TYPES = [
   { name: 'Condominium', value: 'Condominium' },
   { name: 'Terrace House', value: 'Terrace House' },
   { name: 'Semi-D', value: 'Semi-D' },
-  { name: 'Bungalow', value: 'Bungalow' }
+  { name: 'Bungalow', value: 'Bungalow' },
+  { name: 'Flat', value: 'Flat' }
 ];
 
 const BEDROOMS_OPTIONS = [
@@ -126,7 +62,12 @@ export default function LandingPage() {
       router.push('/admin');
     }
 
-    if (session?.user?.id) {
+    const fetchRandomRecommendations = async () => {
+      const data = await propertyService.getRandomProperties(3);
+      setProperties(data);
+    }
+
+    if (session?.user?.id && session?.user.role != "admin") {
       // Fetch personal recommendations for logged-in users
       const fetchRecommendations = async () => {
         try {
@@ -143,14 +84,26 @@ export default function LandingPage() {
           
           if (response.ok) {
             const data = await response.json();
-            setProperties(data.recommendations);
+            if(data.recommendations.detail)
+            {
+              fetchRandomRecommendations();
+            }
+            else {
+              setProperties(data.recommendations);
+            }
+            
           }
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         } catch (error) {
-          console.error('Error fetching recommendations:', error);
+          fetchRandomRecommendations();
+          // console.error('Error fetching recommendations:', error);
         }
       };
       
       fetchRecommendations();
+    } else {
+      
+      fetchRandomRecommendations();
     }
   }, [session, router]);
 
