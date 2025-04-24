@@ -244,7 +244,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
                     Login
                   </Button>
                   <Button 
-                    onClick={() => router.push('/login')}
+                    onClick={() => router.push('/signup')}
                     className="ml-2"
                   >
                     Sign Up
