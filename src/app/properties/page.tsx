@@ -1,14 +1,10 @@
 import PropertiesView from '@/components/properties/PropertiesView';
-import ChatInterface2 from '@/components/chat/ChatInterface2'
-import ChatInterface from '@/components/chat/ChatInterface'
-import { CHAT_INTERFACE } from '@/lib/constant/malaysiaStates'
 
 export default function PropertiesPage() {
   return (
-    <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div className="max-w-5xl mx-auto px-4 sm:px-6  lg:px-16 py-8">
       <h1 className="text-3xl font-bold mb-8 px-2">Available Properties</h1>
       <PropertiesView />
-      { CHAT_INTERFACE == 1 ? (<><ChatInterface mode={'search'}/></>) : (<><ChatInterface2/></>)}
     </div>
   );
 }

@@ -18,71 +18,71 @@ import { Property } from '@/lib/types/database';
 import PropertyCard from '../properties/PropertyCard';
 
 // Sample data - Replace with API calls later
-const RECOMMENDED_PROPERTIES :Property[] = [
-  {
-    property_id: '1',
-    created_at: '2025-03-04 00:00:00+00',
-    title: 'Central Residence @ Sungai Besi, Taman Tasik Pinggiran, Sungai Besi',
-    type: 'Apartment',
-    price: 2800,
-    beds: 3,
-    bathrooms: 2,
-    carparks: 4,
-    size: 1121,
-    description: '',
-    address: '',
-    state: 'Kuala Lumpur',
-    city: 'Sungai Besi',
-    amenities: [],
-    user_id: '777650f9-70a4-4a50-bed0-52cd8dc7099e',
-    images: ["https://img.iproperty.com.my/my-iproperty/premium/486x492-crop/w-mj9k0aed862f-1192-4a5b-a714-27ec27599ac4_2560x1920.jpeg","https://img.iproperty.com.my/my-iproperty/premium/486x492-crop/w-1bymc77c155c-d7c2-4b70-b6d5-a3a9cbda145c_2560x1920.jpeg","https://img.iproperty.com.my/my-iproperty/premium/3840x100000-fit/w-yvay123e7dd0-a8b6-41dc-bd62-392d62c3b35d_2560x1920.jpeg","https://img.iproperty.com.my/my-iproperty/premium/486x492-crop/w-mj9k0aed862f-1192-4a5b-a714-27ec27599ac4_2560x1920.jpeg","https://img.iproperty.com.my/my-iproperty/premium/486x492-crop/w-1bymc77c155c-d7c2-4b70-b6d5-a3a9cbda145c_2560x1920.jpeg"],
-    latitude: 0,
-    longitude: 0,
-    furnishing: ''
-  },
-  {
-    property_id: '2',
-    created_at: '2025-03-04 00:00:00+00',
-    title: 'Central Residence @ Sungai Besi, Taman Tasik Pinggiran, Sungai Besi',
-    type: 'Apartment',
-    price: 2800,
-    beds: 3,
-    bathrooms: 2,
-    carparks: 4,
-    size: 1121,
-    description: '',
-    address: '',
-    state: 'Kuala Lumpur',
-    city: 'Sungai Besi',
-    amenities: [],
-    user_id: '777650f9-70a4-4a50-bed0-52cd8dc7099e',
-    images: ["https://img.iproperty.com.my/my-iproperty/premium/486x492-crop/w-mj9k0aed862f-1192-4a5b-a714-27ec27599ac4_2560x1920.jpeg","https://img.iproperty.com.my/my-iproperty/premium/486x492-crop/w-1bymc77c155c-d7c2-4b70-b6d5-a3a9cbda145c_2560x1920.jpeg","https://img.iproperty.com.my/my-iproperty/premium/3840x100000-fit/w-yvay123e7dd0-a8b6-41dc-bd62-392d62c3b35d_2560x1920.jpeg","https://img.iproperty.com.my/my-iproperty/premium/486x492-crop/w-mj9k0aed862f-1192-4a5b-a714-27ec27599ac4_2560x1920.jpeg","https://img.iproperty.com.my/my-iproperty/premium/486x492-crop/w-1bymc77c155c-d7c2-4b70-b6d5-a3a9cbda145c_2560x1920.jpeg"],
-    latitude: 0,
-    longitude: 0,
-    furnishing: ''
-  },
-  {
-    property_id: '3',
-    created_at: '2025-03-04 00:00:00+00',
-    title: 'Central Residence @ Sungai Besi, Taman Tasik Pinggiran, Sungai Besi',
-    type: 'Apartment',
-    price: 2800,
-    beds: 3,
-    bathrooms: 2,
-    carparks: 4,
-    size: 1121,
-    description: '',
-    address: '',
-    state: 'Kuala Lumpur',
-    city: 'Sungai Besi',
-    amenities: [],
-    user_id: '777650f9-70a4-4a50-bed0-52cd8dc7099e',
-    images: ["https://img.iproperty.com.my/my-iproperty/premium/486x492-crop/w-mj9k0aed862f-1192-4a5b-a714-27ec27599ac4_2560x1920.jpeg","https://img.iproperty.com.my/my-iproperty/premium/486x492-crop/w-1bymc77c155c-d7c2-4b70-b6d5-a3a9cbda145c_2560x1920.jpeg","https://img.iproperty.com.my/my-iproperty/premium/3840x100000-fit/w-yvay123e7dd0-a8b6-41dc-bd62-392d62c3b35d_2560x1920.jpeg","https://img.iproperty.com.my/my-iproperty/premium/486x492-crop/w-mj9k0aed862f-1192-4a5b-a714-27ec27599ac4_2560x1920.jpeg","https://img.iproperty.com.my/my-iproperty/premium/486x492-crop/w-1bymc77c155c-d7c2-4b70-b6d5-a3a9cbda145c_2560x1920.jpeg"],
-    latitude: 0,
-    longitude: 0,
-    furnishing: ''
-  }
-];
+// const RECOMMENDED_PROPERTIES :Property[] = [
+//   {
+//     property_id: '1',
+//     created_at: '2025-03-04 00:00:00+00',
+//     title: 'Central Residence @ Sungai Besi, Taman Tasik Pinggiran, Sungai Besi',
+//     type: 'Apartment',
+//     price: 2800,
+//     beds: 3,
+//     bathrooms: 2,
+//     carparks: 4,
+//     size: 1121,
+//     description: '',
+//     address: '',
+//     state: 'Kuala Lumpur',
+//     city: 'Sungai Besi',
+//     amenities: [],
+//     user_id: '777650f9-70a4-4a50-bed0-52cd8dc7099e',
+//     images: ["https://img.iproperty.com.my/my-iproperty/premium/486x492-crop/w-mj9k0aed862f-1192-4a5b-a714-27ec27599ac4_2560x1920.jpeg","https://img.iproperty.com.my/my-iproperty/premium/486x492-crop/w-1bymc77c155c-d7c2-4b70-b6d5-a3a9cbda145c_2560x1920.jpeg","https://img.iproperty.com.my/my-iproperty/premium/3840x100000-fit/w-yvay123e7dd0-a8b6-41dc-bd62-392d62c3b35d_2560x1920.jpeg","https://img.iproperty.com.my/my-iproperty/premium/486x492-crop/w-mj9k0aed862f-1192-4a5b-a714-27ec27599ac4_2560x1920.jpeg","https://img.iproperty.com.my/my-iproperty/premium/486x492-crop/w-1bymc77c155c-d7c2-4b70-b6d5-a3a9cbda145c_2560x1920.jpeg"],
+//     latitude: 0,
+//     longitude: 0,
+//     furnishing: ''
+//   },
+//   {
+//     property_id: '2',
+//     created_at: '2025-03-04 00:00:00+00',
+//     title: 'Central Residence @ Sungai Besi, Taman Tasik Pinggiran, Sungai Besi',
+//     type: 'Apartment',
+//     price: 2800,
+//     beds: 3,
+//     bathrooms: 2,
+//     carparks: 4,
+//     size: 1121,
+//     description: '',
+//     address: '',
+//     state: 'Kuala Lumpur',
+//     city: 'Sungai Besi',
+//     amenities: [],
+//     user_id: '777650f9-70a4-4a50-bed0-52cd8dc7099e',
+//     images: ["https://img.iproperty.com.my/my-iproperty/premium/486x492-crop/w-mj9k0aed862f-1192-4a5b-a714-27ec27599ac4_2560x1920.jpeg","https://img.iproperty.com.my/my-iproperty/premium/486x492-crop/w-1bymc77c155c-d7c2-4b70-b6d5-a3a9cbda145c_2560x1920.jpeg","https://img.iproperty.com.my/my-iproperty/premium/3840x100000-fit/w-yvay123e7dd0-a8b6-41dc-bd62-392d62c3b35d_2560x1920.jpeg","https://img.iproperty.com.my/my-iproperty/premium/486x492-crop/w-mj9k0aed862f-1192-4a5b-a714-27ec27599ac4_2560x1920.jpeg","https://img.iproperty.com.my/my-iproperty/premium/486x492-crop/w-1bymc77c155c-d7c2-4b70-b6d5-a3a9cbda145c_2560x1920.jpeg"],
+//     latitude: 0,
+//     longitude: 0,
+//     furnishing: ''
+//   },
+//   {
+//     property_id: '3',
+//     created_at: '2025-03-04 00:00:00+00',
+//     title: 'Central Residence @ Sungai Besi, Taman Tasik Pinggiran, Sungai Besi',
+//     type: 'Apartment',
+//     price: 2800,
+//     beds: 3,
+//     bathrooms: 2,
+//     carparks: 4,
+//     size: 1121,
+//     description: '',
+//     address: '',
+//     state: 'Kuala Lumpur',
+//     city: 'Sungai Besi',
+//     amenities: [],
+//     user_id: '777650f9-70a4-4a50-bed0-52cd8dc7099e',
+//     images: ["https://img.iproperty.com.my/my-iproperty/premium/486x492-crop/w-mj9k0aed862f-1192-4a5b-a714-27ec27599ac4_2560x1920.jpeg","https://img.iproperty.com.my/my-iproperty/premium/486x492-crop/w-1bymc77c155c-d7c2-4b70-b6d5-a3a9cbda145c_2560x1920.jpeg","https://img.iproperty.com.my/my-iproperty/premium/3840x100000-fit/w-yvay123e7dd0-a8b6-41dc-bd62-392d62c3b35d_2560x1920.jpeg","https://img.iproperty.com.my/my-iproperty/premium/486x492-crop/w-mj9k0aed862f-1192-4a5b-a714-27ec27599ac4_2560x1920.jpeg","https://img.iproperty.com.my/my-iproperty/premium/486x492-crop/w-1bymc77c155c-d7c2-4b70-b6d5-a3a9cbda145c_2560x1920.jpeg"],
+//     latitude: 0,
+//     longitude: 0,
+//     furnishing: ''
+//   }
+// ];
 
 const POPULAR_LOCATIONS = [
   { name: 'Kuala Lumpur', count: 253, image: '/api/placeholder/220/140' },
@@ -110,6 +110,7 @@ const BEDROOMS_OPTIONS = [
 export default function LandingPage() {
   const router = useRouter();
   const { data: session } = useSession();
+  const [properties, setProperties] = useState<Property[]>([]);
   const [searchParams, setSearchParams] = useState({
     state: '',
     searchTerm: '',
@@ -123,6 +124,33 @@ export default function LandingPage() {
   useEffect(() => {
     if (session?.user.role === "admin") {
       router.push('/admin');
+    }
+
+    if (session?.user?.id) {
+      // Fetch personal recommendations for logged-in users
+      const fetchRecommendations = async () => {
+        try {
+          const response = await fetch('/api/recommendations', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              userId: session.user.id,
+              limit: 3
+            }),
+          });
+          
+          if (response.ok) {
+            const data = await response.json();
+            setProperties(data.recommendations);
+          }
+        } catch (error) {
+          console.error('Error fetching recommendations:', error);
+        }
+      };
+      
+      fetchRecommendations();
     }
   }, [session, router]);
 
@@ -321,7 +349,7 @@ export default function LandingPage() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {RECOMMENDED_PROPERTIES.map((property) => (
+            {properties.map((property) => (
               <PropertyCard
                         key={property.property_id}
                         {...property}
@@ -329,6 +357,8 @@ export default function LandingPage() {
                     />
             ))}
           </div>
+
+          
         </div>
       </div>
 

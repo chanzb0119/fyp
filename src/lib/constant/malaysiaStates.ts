@@ -142,7 +142,7 @@ export const stateAndCities: { [key: string]: string[] } = {
         "Jejawi",
         "Pauh"
     ],
-    "Pulau Pinang": [
+    "Penang": [
         "George Town",
         "Butterworth",
         "Bukit Mertajam",
@@ -238,7 +238,7 @@ export const stateAndCities: { [key: string]: string[] } = {
         "Merchang",
         "Kemasik"
     ],
-    "Wilayah Persekutuan Kuala Lumpur": [
+    "Kuala Lumpur": [
         "Kuala Lumpur City Centre",
         "Wangsa Maju",
         "Setapak",
@@ -255,7 +255,7 @@ export const stateAndCities: { [key: string]: string[] } = {
         "Taman Tun Dr Ismail",
         "Segambut"
     ],
-    "Wilayah Persekutuan Labuan": [
+    "Labuan": [
         "Labuan Town",
         "Rancha-Rancha",
         "Nagalang",
@@ -267,7 +267,7 @@ export const stateAndCities: { [key: string]: string[] } = {
         "Sungai Bedaun",
         "Sungai Keling"
     ],
-    "Wilayah Persekutuan Putrajaya": [
+    "Putrajaya": [
         "Precinct 1",
         "Precinct 2",
         "Precinct 3",
