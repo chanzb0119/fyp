@@ -6,7 +6,7 @@ import PropertiesView from '@/components/properties/PropertiesView';
 
 // Create a client component for the properties listing
 function PropertiesContent() {
-  return (<div className=" mx-auto px-10 lg:px-36 py-8">
+  return (<div className="px-6 md:px-16 lg:px-36">
     <PropertiesView />
   </div>);
 }
@@ -15,7 +15,7 @@ function PropertiesContent() {
 export default function PropertiesPage() {
   return (
     <Suspense fallback={
-      <div className="mx-auto px-4 lg:px-36 py-8">
+      <div className="md:px-16 lg:px-36 py-8">
         <Card>
           <CardContent className="p-8 text-center">
             <p>Loading properties...</p>

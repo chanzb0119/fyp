@@ -177,7 +177,7 @@ const ProfilePage = () => {
   }
 
   return (
-    <div className="max-w-6xl mx-auto px-28 py-8 ">
+    <div className="px-4 md:px-12 lg:px-28 py-2 lg:py-8">
       <Tabs defaultValue={activeTab} className="w-full" onValueChange={setActiveTab}>
         <TabsList className="grid w-full grid-cols-3 lg:w-[550px]">
           <TabsTrigger value="profile">Profile</TabsTrigger>

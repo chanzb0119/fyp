@@ -9,7 +9,6 @@ import {
   Search, 
   MapPin, 
   Home,
-  ArrowRight,
   TrendingUp
 } from 'lucide-react';
 import Link from 'next/link';
@@ -128,7 +127,7 @@ export default function LandingPage() {
       {/* Hero Section with Search */}
       <div className="relative ">
         {/* Background with overlay gradient */}
-        <div className="relative h-[700px] bg-cover bg-center lg:px-44" style={{ 
+        <div className="relative h-auto bg-cover bg-center px-4 md:px-16 lg:px-36 pb-12" style={{ 
           backgroundImage: 'url(/landing-background.jpg)'
         }}>
           <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/40 to-black/70" />
@@ -241,7 +240,7 @@ export default function LandingPage() {
       </div>
 
       {/* How It Works Section */}
-      <div className="py-10 bg-white px-20 lg:px-36">
+      <div className="py-10 bg-white px-4 md:px-16 lg:px-36">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold text-gray-900">How It Works</h2>
@@ -288,20 +287,13 @@ export default function LandingPage() {
       </div>
 
       {/* Recommended Properties Section */}
-      <div className="py-10 bg-gray-100 px-20 lg:px-36">
+      <div className="py-10 bg-gray-100 px-4 md:px-16 lg:px-36">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center mb-8">
             <h2 className="text-3xl font-bold text-gray-900">Recommended Listings</h2>
-            <Link 
-              href="/properties" 
-              className="flex items-center text-blue-600 hover:text-blue-800 font-medium"
-            >
-              View all
-              <ArrowRight className="ml-2 h-4 w-4" />
-            </Link>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
             {properties.map((property) => (
               <PropertyCard
                         key={property.property_id}
@@ -316,7 +308,7 @@ export default function LandingPage() {
       </div>
 
       {/* Popular Locations Section */}
-      <div className="py-10 bg-white px-20 lg:px-36">
+      <div className="py-10 bg-white px-4 md:px-16 lg:px-36">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold text-gray-900">Popular Locations</h2>

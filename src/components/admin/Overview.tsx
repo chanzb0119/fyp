@@ -12,6 +12,10 @@ import {
   CartesianGrid,
   Tooltip,
   ResponsiveContainer,
+  PieChart,
+  Pie,
+  Cell,
+  Legend
 } from 'recharts';
 import { Users, Building2, AlertTriangle, ShieldCheck } from 'lucide-react';
 
@@ -40,9 +44,22 @@ const Overview = () => {
     recentReports: []
   });
   const [loading, setLoading] = useState(true);
+  const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
     loadStats();
+    
+    // Check if we're on mobile
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    
+    return () => {
+      window.removeEventListener('resize', checkMobile);
+    };
   }, []);
 
   const loadStats = async () => {
@@ -119,8 +136,11 @@ const Overview = () => {
   };
 
   if (loading) {
-    return <div>Loading statistics...</div>;
+    return <div className="text-center py-8">Loading statistics...</div>;
   }
+
+  // Colors for pie chart
+  const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042'];
 
   const StatCard = ({ title, value, icon, description }: {
     title: string;
@@ -149,24 +169,24 @@ const Overview = () => {
   return (
     <div className="space-y-6">
       {/* Summary Statistics */}
-      <div className="grid gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-3 md:gap-6 grid-cols-2 md:grid-cols-4">
         <StatCard
           title="Total Users"
           value={stats.totalUsers}
           icon={<Users className="w-6 h-6 text-blue-600" />}
         />
         <StatCard
-          title="Total Properties"
+          title="Properties"
           value={stats.totalProperties}
           icon={<Building2 className="w-6 h-6 text-blue-600" />}
         />
         <StatCard
-          title="Active Reports"
+          title="Reports"
           value={stats.totalReports}
           icon={<AlertTriangle className="w-6 h-6 text-blue-600" />}
         />
         <StatCard
-          title="Pending Applications"
+          title="Pending Apps"
           value={stats.pendingApplications}
           icon={<ShieldCheck className="w-6 h-6 text-blue-600" />}
         />
@@ -182,13 +202,37 @@ const Overview = () => {
           <CardContent>
             <div className="h-[300px]">
               <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={stats.usersByRole}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="role" />
-                  <YAxis allowDecimals={false} />
-                  <Tooltip />
-                  <Bar dataKey="count" fill="#3b82f6" />
-                </BarChart>
+                {isMobile ? (
+                  // Pie chart for mobile view
+                  <PieChart>
+                    <Pie
+                      data={stats.usersByRole}
+                      cx="50%"
+                      cy="50%"
+                      labelLine={false}
+                      label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
+                      outerRadius={80}
+                      fill="#8884d8"
+                      dataKey="count"
+                      nameKey="role"
+                    >
+                      {stats.usersByRole.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                      ))}
+                    </Pie>
+                    <Legend />
+                    <Tooltip formatter={(value) => [value, 'Users']} />
+                  </PieChart>
+                ) : (
+                  // Bar chart for desktop view
+                  <BarChart data={stats.usersByRole}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="role" />
+                    <YAxis allowDecimals={false} />
+                    <Tooltip />
+                    <Bar dataKey="count" fill="#3b82f6" />
+                  </BarChart>
+                )}
               </ResponsiveContainer>
             </div>
           </CardContent>
@@ -204,7 +248,7 @@ const Overview = () => {
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={stats.recentReports}>
                   <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="date" />
+                  <XAxis dataKey="date" tick={{ fontSize: isMobile ? 10 : 12 }} />
                   <YAxis allowDecimals={false} />
                   <Tooltip />
                   <Bar dataKey="count" fill="#3b82f6" />

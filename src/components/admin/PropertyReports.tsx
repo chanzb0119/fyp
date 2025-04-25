@@ -27,6 +27,7 @@ import {
   Eye,
   Trash2,
   CheckCircle,
+  Calendar
 } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Link from 'next/link';
@@ -51,15 +52,57 @@ interface Report {
   };
 }
 
+interface ReportCardProps {
+  report: Report;
+  onReviewClick: () => void;
+  getCategoryBadge: (category: string) => React.ReactNode;
+}
+
+// Responsive card for mobile view
+const ReportCard = ({ report, onReviewClick, getCategoryBadge }: ReportCardProps) => (
+  <Card className="mb-4">
+    <CardContent className="pt-6">
+      <div className="flex justify-between items-start mb-3">
+        <div>
+          <span className="block mb-1 text-sm text-gray-500">
+            <Calendar className="inline-block w-4 h-4 mr-1" />
+            {format(new Date(report.created_at), 'MMM d, yyyy')}
+          </span>
+          <div className="mb-2">{getCategoryBadge(report.category)}</div>
+        </div>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={onReviewClick}
+        >
+          Review
+        </Button>
+      </div>
+      
+      <div className="space-y-3">
+        <div>
+          <span className="text-sm font-medium text-gray-500">Reporter:</span>
+          <span className="block">{report.user?.name}</span>
+        </div>
+        <div>
+          <span className="text-sm font-medium text-gray-500">Property:</span>
+          <span className="block truncate">{report.property?.title}</span>
+        </div>
+      </div>
+    </CardContent>
+  </Card>
+);
+
 interface ReportsTableProps {
   reports: Report[];
   getCategoryBadge: (category: string) => React.ReactNode;
   onReviewReport: (report: Report) => void;
 }
 
+// Table for desktop view
 const ReportsTable = ({ reports, getCategoryBadge, onReviewReport }: ReportsTableProps) => (
   <Card>
-    <CardContent className="p-6">
+    <CardContent className="p-6 overflow-x-auto">
       <Table>
         <TableHeader>
           <TableRow>
@@ -78,7 +121,7 @@ const ReportsTable = ({ reports, getCategoryBadge, onReviewReport }: ReportsTabl
               </TableCell>
               <TableCell>{getCategoryBadge(report.category)}</TableCell>
               <TableCell>{report.user?.name}</TableCell>
-              <TableCell>{report.property?.title}</TableCell>
+              <TableCell className="max-w-[200px] truncate">{report.property?.title}</TableCell>
               <TableCell>
                 <Button
                   variant="outline"
@@ -109,9 +152,22 @@ const PropertyReports = () => {
   const [selectedReport, setSelectedReport] = useState<Report | null>(null);
   const [showDialog, setShowDialog] = useState(false);
   const [selectedTab, setSelectedTab] = useState('all');
+  const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
     loadReports();
+    
+    // Check if we're on mobile
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    
+    return () => {
+      window.removeEventListener('resize', checkMobile);
+    };
   }, []);
 
   const loadReports = async () => {
@@ -192,68 +248,63 @@ const PropertyReports = () => {
     }
   };
 
+  const filteredReports = () => {
+    if (selectedTab === 'all') return reports;
+    return reports.filter(r => r.category.toLowerCase() === selectedTab);
+  };
+
   if (loading) {
-    return <div>Loading reports...</div>;
+    return <div className="flex justify-center items-center p-8">Loading reports...</div>;
   }
 
   return (
     <div className="space-y-6">
       <Tabs defaultValue="all" value={selectedTab} onValueChange={setSelectedTab}>
-        <TabsList>
-          <TabsTrigger value="all">All Reports</TabsTrigger>
-          <TabsTrigger value="inappropriate">Inappropriate Content</TabsTrigger>
-          <TabsTrigger value="fraudulent">Fraudulent Listings</TabsTrigger>
-          <TabsTrigger value="inaccurate">Inaccurate Information</TabsTrigger>
-        </TabsList>
+        <div className="overflow-x-auto pb-2">
+          <TabsList className="w-full md:w-auto">
+            <TabsTrigger value="all">All Reports</TabsTrigger>
+            <TabsTrigger value="inappropriate content">Inappropriate</TabsTrigger>
+            <TabsTrigger value="fraudulent listing">Fraudulent</TabsTrigger>
+            <TabsTrigger value="inaccurate information">Inaccurate</TabsTrigger>
+          </TabsList>
+        </div>
 
-        <TabsContent value="all">
-          <ReportsTable 
-            reports={reports} 
-            getCategoryBadge={getCategoryBadge}
-            onReviewReport={(report) => {
-              setSelectedReport(report);
-              setShowDialog(true);
-            }}
-          />
-        </TabsContent>
-
-        <TabsContent value="inappropriate">
-          <ReportsTable 
-            reports={reports.filter(r => r.category.toLowerCase() === 'inappropriate content')}
-            getCategoryBadge={getCategoryBadge}
-            onReviewReport={(report) => {
-              setSelectedReport(report);
-              setShowDialog(true);
-            }}
-          />
-        </TabsContent>
-
-        <TabsContent value="fraudulent">
-          <ReportsTable 
-            reports={reports.filter(r => r.category.toLowerCase() === 'fraudulent listing')}
-            getCategoryBadge={getCategoryBadge}
-            onReviewReport={(report) => {
-              setSelectedReport(report);
-              setShowDialog(true);
-            }}
-          />
-        </TabsContent>
-
-        <TabsContent value="inaccurate">
-          <ReportsTable 
-            reports={reports.filter(r => r.category.toLowerCase() === 'inaccurate information')}
-            getCategoryBadge={getCategoryBadge}
-            onReviewReport={(report) => {
-              setSelectedReport(report);
-              setShowDialog(true);
-            }}
-          />
+        <TabsContent value={selectedTab}>
+          {isMobile ? (
+            <div className="space-y-4">
+              {filteredReports().map((report) => (
+                <ReportCard
+                  key={report.report_id}
+                  report={report}
+                  onReviewClick={() => {
+                    setSelectedReport(report);
+                    setShowDialog(true);
+                  }}
+                  getCategoryBadge={getCategoryBadge}
+                />
+              ))}
+              {filteredReports().length === 0 && (
+                <div className="text-center py-8 text-gray-500">
+                  No reports found
+                </div>
+              )}
+            </div>
+          ) : (
+            <ReportsTable 
+              reports={filteredReports()} 
+              getCategoryBadge={getCategoryBadge}
+              onReviewReport={(report) => {
+                setSelectedReport(report);
+                setShowDialog(true);
+              }}
+            />
+          )}
         </TabsContent>
       </Tabs>
 
       {/* Report Review Dialog */}
       <Dialog open={showDialog} onOpenChange={setShowDialog}>
-        <DialogContent className="max-w-2xl">
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>Review Report</DialogTitle>
             <DialogDescription>
@@ -263,7 +314,7 @@ const PropertyReports = () => {
 
           {selectedReport && (
             <div className="space-y-6">
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <h3 className="font-semibold mb-2">Report Details</h3>
                   <div className="space-y-2 text-sm">
@@ -296,7 +347,7 @@ const PropertyReports = () => {
               {selectedReport.image_urls && selectedReport.image_urls.length > 0 && (
                 <div>
                   <h3 className="font-semibold mb-2">Evidence Images</h3>
-                  <div className="grid grid-cols-3 gap-4">
+                  <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                     {selectedReport.image_urls.map((url, index) => (
                       <div key={index} className="relative aspect-video rounded-lg overflow-hidden">
                         <Image
@@ -313,7 +364,7 @@ const PropertyReports = () => {
             </div>
           )}
 
-          <DialogFooter className="flex justify-end space-x-2 mt-6">
+          <DialogFooter className="flex flex-col sm:flex-row gap-2 justify-end mt-6">
             <Button
               variant="outline"
               onClick={() => handleDismissReport(selectedReport!.report_id)}

@@ -1,6 +1,6 @@
 "use client";
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { 
   Bed, 
   Bath, 
@@ -16,6 +16,8 @@ import ImageGallery from './ImageGallery';
 import { format } from 'date-fns';
 import StickyActions from './StickyAction';
 import RecommendedProperties from './RecommendedProperty';
+import { supabase } from '@/lib/supabase/client';
+import { useSession } from 'next-auth/react';
 
 interface PropertyDetailsProps {
   property: {
@@ -42,11 +44,49 @@ interface PropertyDetailsProps {
 }
 
 const PropertyDetails = ({ property }: PropertyDetailsProps) => {
+
+  const { data: session } = useSession();
+
+  // Track property view when component mounts
+  useEffect(() => {
+    const trackPropertyView = async () => {
+      // Only track view if user is logged in
+      if (session?.user?.id) {
+        try {
+          // Add small random delay to avoid double-triggering in development
+          await new Promise(resolve => setTimeout(resolve, 100));
+          
+          const userId = session.user.id;
+          const propertyId = property.property_id;
+          const viewKey = `property_view_${propertyId}_${userId}`;
+          const lastViewTime = localStorage.getItem(viewKey);
+          const currentTime = Date.now();
+          
+          // Check if user has viewed this property in the last 30 minutes
+          if (!lastViewTime || (currentTime - parseInt(lastViewTime)) > 30 * 60 * 1000) {
+            // Record the view in Supabase
+            await supabase.from('event').insert({
+              property_id: propertyId,
+              user_id: userId,
+              event: 'view'
+            });
+            
+            // Update the last view time
+            localStorage.setItem(viewKey, currentTime.toString());
+          }
+        } catch (error) {
+          console.error('Error tracking view:', error);
+        }
+      }
+    };
+    
+    trackPropertyView();
+  }, [property.property_id, session?.user?.id]);
   
   const formattedDate = format(new Date(property.created_at), 'MMMM d, yyyy');
 
   return (
-    <div className="sm:px-6 lg:px-28">
+    <div className="sm:px-4 lg:px-28">
       {/* Image Gallery */}
       <ImageGallery images={property.images} title={property.title} />
 

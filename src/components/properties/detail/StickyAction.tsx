@@ -10,6 +10,7 @@ import { UserProfile } from '@/lib/types/database';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useSession } from 'next-auth/react';
 import ReportDialog from './ReportDialog';
+import { supabase } from '@/lib/supabase/client';
 
 interface StickyActionsProps {
   propertyId: string;
@@ -47,12 +48,28 @@ const StickyActions = ({ propertyId, price, ownerId }: StickyActionsProps) => {
     
   }, [isUser, ownerId, propertyId, session?.user.id]);
 
-  const handleAddToWishlist = () => {
+  const handleAddToWishlist = async () => {
     if(isUser){
       if(!isLiked){
-        userService.addToWishlist(session.user.id, propertyId);
+        await userService.addToWishlist(session.user.id, propertyId);
+        
+        await supabase.from('event').insert({
+          property_id: propertyId,
+          user_id: session.user.id,
+          event: 'wishlist'
+        });
       } else {
-        userService.removeFromWishlist(session.user.id, propertyId);
+        await userService.removeFromWishlist(session.user.id, propertyId);
+
+        // Delete the corresponding wishlist event
+        await supabase.from('event')
+        .delete()
+        .match({
+          property_id: propertyId,
+          user_id: session.user.id,
+          event: 'wishlist'
+        });
+
       }
       setIsLiked(!isLiked);
     }
@@ -60,14 +77,22 @@ const StickyActions = ({ propertyId, price, ownerId }: StickyActionsProps) => {
     console.log('Add to wishlist');
   };
 
-  const handleContact = () => {
+  const handleContact = async () => {
     if (owner?.phone) {
+      // Track the inquiry event
+      if (session?.user?.id) {
+        await supabase.from('event').insert({
+          property_id: propertyId,
+          user_id: session.user.id,
+          event: 'inquiry'
+        });
+      }
       // Format phone number for WhatsApp URL
       const phoneNumber = owner.phone.replace(/\D/g, '');
       window.open(`https://wa.me/${phoneNumber}`, '_blank');
     } else {
       console.log('No phone number available');
-      // You might want to show a notification to the user
+      
     }
   };
 

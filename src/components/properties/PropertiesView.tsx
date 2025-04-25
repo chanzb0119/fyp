@@ -74,14 +74,14 @@ const PropertiesView = () => {
     };
 
     return (
-        <div className="min-h-screen bg-gray-50">
+        <div className=" bg-gray-50 ">
             <SearchHeader
                 filters={formFilters}
                 onFilterChange={handleFilterChange}
                 onSearch={handleSearch}
             />
             
-            <div className="max-w-7xl mx-auto px-4 py-6">
+            <div className="py-4">
                 {/* Sort Dropdown */}
                 <div className="mb-6">
                     <SortDropdown 

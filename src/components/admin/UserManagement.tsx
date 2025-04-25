@@ -29,7 +29,7 @@ import {
   Shield,
   Home,
   Ban,
-  Check
+  Check,
 } from 'lucide-react';
 import Image from 'next/image';
 
@@ -43,6 +43,65 @@ interface User {
   profile_image: string | null;
 }
 
+interface UserCardProps {
+  user: User;
+  onManageClick: () => void;
+  getRoleBadge: (role: string) => React.ReactNode;
+}
+
+// Responsive card for mobile view
+const UserCard = ({ user, onManageClick, getRoleBadge }: UserCardProps) => (
+  <Card className="mb-4">
+    <CardContent className="pt-6">
+      <div className="flex items-start gap-4">
+        <div className="relative flex-shrink-0 w-12 h-12 rounded-full overflow-hidden bg-gray-100">
+          {user.profile_image ? (
+            <Image
+              src={user.profile_image}
+              alt={user.name}
+              fill
+              className="object-cover"
+            />
+          ) : (
+            <UserIcon className="w-6 h-6 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-gray-400" />
+          )}
+        </div>
+        
+        <div className="flex-1 min-w-0">
+          <h3 className="font-semibold truncate">{user.name}</h3>
+          <p className="text-sm text-gray-500 truncate">{user.email}</p>
+          
+          <div className="flex flex-wrap gap-2 mt-2 items-center">
+            {getRoleBadge(user.role)}
+            {user.email_verified ? (
+              <Badge variant="outline" className="bg-green-50 text-green-600 border-green-300">
+                Verified
+              </Badge>
+            ) : (
+              <Badge variant="outline" className="bg-yellow-50 text-yellow-600 border-yellow-300">
+                Unverified
+              </Badge>
+            )}
+          </div>
+          
+          <div className="text-xs text-gray-500 mt-2 flex items-center">
+            
+            Joined {format(new Date(user.created_at), 'MMM d, yyyy')}
+          </div>
+        </div>
+        
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={onManageClick}
+        >
+          Manage
+        </Button>
+      </div>
+    </CardContent>
+  </Card>
+);
+
 const UserManagement = () => {
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
@@ -50,9 +109,22 @@ const UserManagement = () => {
   const [selectedRole, setSelectedRole] = useState('all');
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [showDialog, setShowDialog] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
     loadUsers();
+    
+    // Check if we're on mobile
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    
+    return () => {
+      window.removeEventListener('resize', checkMobile);
+    };
   }, []);
 
   const loadUsers = async () => {
@@ -109,15 +181,15 @@ const UserManagement = () => {
   });
 
   if (loading) {
-    return <div>Loading users...</div>;
+    return <div className="flex justify-center items-center p-8">Loading users...</div>;
   }
 
   return (
     <div className="space-y-6">
       {/* Filters */}
       <Card>
-        <CardContent className="p-6">
-          <div className="flex flex-col sm:flex-row gap-4">
+        <CardContent className="p-4 md:p-6">
+          <div className="flex flex-col md:flex-row gap-4">
             <div className="relative flex-1">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
               <Input
@@ -130,7 +202,7 @@ const UserManagement = () => {
             <select
               value={selectedRole}
               onChange={(e) => setSelectedRole(e.target.value)}
-              className="px-3 py-2 border rounded-md"
+              className="px-3 py-2 border rounded-md md:w-auto"
             >
               <option value="all">All Roles</option>
               <option value="user">Users</option>
@@ -141,76 +213,104 @@ const UserManagement = () => {
         </CardContent>
       </Card>
 
-      {/* Users Table */}
-      <Card>
-        <CardContent className="p-6">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>User</TableHead>
-                <TableHead>Email</TableHead>
-                <TableHead>Role</TableHead>
-                <TableHead>Joined</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {filteredUsers.map((user) => (
-                <TableRow key={user.user_id}>
-                  <TableCell>
-                    <div className="flex items-center gap-3">
-                      <div className="relative w-8 h-8 rounded-full overflow-hidden bg-gray-100">
-                        {user.profile_image ? (
-                          <Image
-                            src={user.profile_image}
-                            alt={user.name}
-                            fill
-                            className="object-cover"
-                          />
-                        ) : (
-                          <UserIcon className="w-4 h-4 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-gray-400" />
-                        )}
-                      </div>
-                      <span>{user.name}</span>
-                    </div>
-                  </TableCell>
-                  <TableCell>{user.email}</TableCell>
-                  <TableCell>{getRoleBadge(user.role)}</TableCell>
-                  <TableCell>{format(new Date(user.created_at), 'MMM d, yyyy')}</TableCell>
-                  <TableCell>
-                    {user.email_verified ? (
-                      <Badge variant="outline" className="bg-green-50 text-green-600 border-green-300">
-                        Verified
-                      </Badge>
-                    ) : (
-                      <Badge variant="outline" className="bg-yellow-50 text-yellow-600 border-yellow-300">
-                        Unverified
-                      </Badge>
-                    )}
-                  </TableCell>
-                  <TableCell>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => {
-                        setSelectedUser(user);
-                        setShowDialog(true);
-                      }}
-                    >
-                      Manage
-                    </Button>
-                  </TableCell>
+      {/* Users List */}
+      {isMobile ? (
+        <div className="space-y-2">
+          {filteredUsers.map((user) => (
+            <UserCard
+              key={user.user_id}
+              user={user}
+              onManageClick={() => {
+                setSelectedUser(user);
+                setShowDialog(true);
+              }}
+              getRoleBadge={getRoleBadge}
+            />
+          ))}
+          {filteredUsers.length === 0 && (
+            <div className="text-center py-8 text-gray-500">
+              No users found matching your criteria
+            </div>
+          )}
+        </div>
+      ) : (
+        <Card>
+          <CardContent className="p-6 overflow-x-auto">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>User</TableHead>
+                  <TableHead>Email</TableHead>
+                  <TableHead>Role</TableHead>
+                  <TableHead>Joined</TableHead>
+                  <TableHead>Status</TableHead>
+                  <TableHead>Actions</TableHead>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </CardContent>
-      </Card>
+              </TableHeader>
+              <TableBody>
+                {filteredUsers.map((user) => (
+                  <TableRow key={user.user_id}>
+                    <TableCell>
+                      <div className="flex items-center gap-3">
+                        <div className="relative w-8 h-8 rounded-full overflow-hidden bg-gray-100">
+                          {user.profile_image ? (
+                            <Image
+                              src={user.profile_image}
+                              alt={user.name}
+                              fill
+                              className="object-cover"
+                            />
+                          ) : (
+                            <UserIcon className="w-4 h-4 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-gray-400" />
+                          )}
+                        </div>
+                        <span className="truncate max-w-[150px]">{user.name}</span>
+                      </div>
+                    </TableCell>
+                    <TableCell className="truncate max-w-[150px]">{user.email}</TableCell>
+                    <TableCell>{getRoleBadge(user.role)}</TableCell>
+                    <TableCell>{format(new Date(user.created_at), 'MMM d, yyyy')}</TableCell>
+                    <TableCell>
+                      {user.email_verified ? (
+                        <Badge variant="outline" className="bg-green-50 text-green-600 border-green-300">
+                          Verified
+                        </Badge>
+                      ) : (
+                        <Badge variant="outline" className="bg-yellow-50 text-yellow-600 border-yellow-300">
+                          Unverified
+                        </Badge>
+                      )}
+                    </TableCell>
+                    <TableCell>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => {
+                          setSelectedUser(user);
+                          setShowDialog(true);
+                        }}
+                      >
+                        Manage
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                ))}
+                {filteredUsers.length === 0 && (
+                  <TableRow>
+                    <TableCell colSpan={6} className="text-center py-8 text-gray-500">
+                      No users found matching your criteria
+                    </TableCell>
+                  </TableRow>
+                )}
+              </TableBody>
+            </Table>
+          </CardContent>
+        </Card>
+      )}
 
       {/* User Management Dialog */}
       <Dialog open={showDialog} onOpenChange={setShowDialog}>
-        <DialogContent>
+        <DialogContent className="max-w-md max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>Manage User</DialogTitle>
             <DialogDescription>
@@ -242,7 +342,7 @@ const UserManagement = () => {
               <div className="space-y-4">
                 <div>
                   <h4 className="font-medium mb-2">Change Role</h4>
-                  <div className="grid grid-cols-3 gap-2">
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
                     <Button
                       variant={selectedUser.role === 'user' ? 'default' : 'outline'}
                       className="flex items-center gap-2"
