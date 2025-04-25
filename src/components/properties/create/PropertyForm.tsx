@@ -238,6 +238,29 @@ const PropertyForm = () => {
     );
   }
 
+  // Check if user is not a landlord
+  if (session?.user && session.user.role !== 'landlord') {
+    return (
+      <div className="max-w-2xl mx-auto bg-white p-8 rounded-lg shadow-sm">
+        <div className="text-center space-y-6">
+          <div className="inline-flex items-center justify-center p-4 bg-blue-50 rounded-full">
+            <Building2 className="h-10 w-10 text-blue-600" />
+          </div>
+          <h2 className="text-2xl font-semibold">Become a Landlord First</h2>
+          <p className="text-gray-600 max-w-md mx-auto">
+            To list a property, you need to have landlord privileges. Please apply for landlord status to continue.
+          </p>
+          <Link 
+            href="/profile?tab=properties"
+            className="inline-block bg-blue-600 text-white px-6 py-3 rounded-md hover:bg-blue-700 transition-colors"
+          >
+            Apply for Landlord Status
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <form onSubmit={handleSubmit} className="max-w-2xl mx-auto space-y-8">
       <div className="bg-white p-6 rounded-lg shadow-sm space-y-6">
