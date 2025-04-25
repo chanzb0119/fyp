@@ -127,7 +127,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
       <header 
         className={cn(
           "sticky top-0 z-40 w-full transition-all duration-200",
-          scrolled ? "bg-slate-200/95 backdrop-blur-sm shadow-sm" : "bg-transparent"
+          scrolled ? "bg-slate-200/95 backdrop-blur-sm shadow-sm" : "bg-slate-200 backdrop-blur-sm shadow-sm"
         )}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
