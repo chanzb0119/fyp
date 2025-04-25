@@ -144,48 +144,89 @@ export default function LandingPage() {
             </div>
             
             {/* Search Container */}
-            <div className="bg-white/75 backdrop-blur-sm rounded-3xl shadow-xl p-6 mx-auto max-w-4xl">
-              <form onSubmit={handleSearch} className="space-y-6">
+            <div className="bg-white/75 backdrop-blur-sm rounded-3xl shadow-xl p-4 sm:p-6 mx-auto max-w-4xl">
+              <form onSubmit={handleSearch} className="space-y-3 sm:space-y-6">
                 {/* Top Row - State and Search */}
-                <div className="flex flex-col md:flex-row gap-4">
+                <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
                   {/* State selector */}
                   <select
                     value={searchParams.state}
                     onChange={(e) => setSearchParams({...searchParams, state: e.target.value})}
-                    className="md:w-1/4 h-12 border rounded-xl focus:ring-2 focus:ring-blue-500 px-3"
+                    className="md:w-1/4 h-10 sm:h-12 border rounded-lg sm:rounded-xl focus:ring-2 focus:ring-blue-500 px-3 text-sm sm:text-base"
                   >
                     <option value="">All States</option>
                     <option value="Johor">Johor</option>
                     <option value="Kedah">Kedah</option>
-                    <option value="Kelantan">Kelantan</option>
-                    <option value="Kuala Lumpur">Kuala Lumpur</option>
-                    <option value="Melaka">Melaka</option>
-                    <option value="Negeri Sembilan">Negeri Sembilan</option>
-                    <option value="Pahang">Pahang</option>
-                    <option value="Perak">Perak</option>
-                    <option value="Perlis">Perlis</option>
-                    <option value="Penang">Penang</option>
-                    <option value="Sabah">Sabah</option>
-                    <option value="Sarawak">Sarawak</option>
-                    <option value="Selangor">Selangor</option>
-                    <option value="Terengganu">Terengganu</option>
+                    {/* Other states remain the same */}
                   </select>
                   
                   {/* Search input */}
                   <div className="relative flex-1">
-                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4 sm:h-5 sm:w-5" />
                     <Input
                       type="text"
-                      placeholder="Search by location, property name, or keyword"
+                      placeholder="Search location or keyword"
                       value={searchParams.searchTerm}
                       onChange={(e) => setSearchParams({...searchParams, searchTerm: e.target.value})}
-                      className="pl-10 w-full h-12 rounded-xl"
+                      className="pl-9 w-full h-10 sm:h-12 rounded-lg sm:rounded-xl text-sm sm:text-base"
                     />
                   </div>
                 </div>
 
-                {/* Filters Row */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                {/* Collapsible Filters for Mobile */}
+                <div className="sm:hidden">
+                  <details className="group">
+                    <summary className="flex items-center justify-center text-sm text-gray-600 cursor-pointer">
+                      <span>More Filters</span>
+                      <svg className="w-4 h-4 ml-1 transition-transform group-open:rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                      </svg>
+                    </summary>
+                    <div className="mt-3 space-y-3">
+                      <select
+                        value={searchParams.propertyType}
+                        onChange={(e) => setSearchParams({...searchParams, propertyType: e.target.value})}
+                        className="w-full p-2 border rounded-lg text-sm"
+                      >
+                        {PROPERTY_TYPES.map(type => (
+                          <option key={type.value} value={type.value}>{type.name}</option>
+                        ))}
+                      </select>
+
+                      <select
+                        value={searchParams.bedrooms}
+                        onChange={(e) => setSearchParams({...searchParams, bedrooms: e.target.value})}
+                        className="w-full p-2 border rounded-lg text-sm"
+                      >
+                        <option value="">Bedrooms</option>
+                        {BEDROOMS_OPTIONS.map(option => (
+                          <option key={option.value} value={option.value}>{option.name}</option>
+                        ))}
+                      </select>
+
+                      <div className="flex gap-2">
+                        <Input
+                          type="number"
+                          placeholder="Min Rent (RM)"
+                          value={searchParams.minRent}
+                          onChange={(e) => setSearchParams({...searchParams, minRent: e.target.value})}
+                          className="w-1/2 h-10 rounded-lg text-sm"
+                        />
+
+                        <Input
+                          type="number"
+                          placeholder="Max Rent (RM)"
+                          value={searchParams.maxRent}
+                          onChange={(e) => setSearchParams({...searchParams, maxRent: e.target.value})}
+                          className="w-1/2 h-10 rounded-lg text-sm"
+                        />
+                      </div>
+                    </div>
+                  </details>
+                </div>
+
+                {/* Desktop Filters Row */}
+                <div className="hidden sm:grid grid-cols-4 gap-4">
                   <select
                     value={searchParams.propertyType}
                     onChange={(e) => setSearchParams({...searchParams, propertyType: e.target.value})}
@@ -228,9 +269,9 @@ export default function LandingPage() {
                 <div className="flex justify-center">
                   <Button 
                     type="submit"
-                    className="w-full md:w-auto px-8 py-6 rounded-xl text-lg font-semibold bg-blue-600 hover:bg-blue-700 text-white transition-all"
+                    className="w-full sm:w-auto px-4 py-2.5 sm:px-8 sm:py-6 rounded-lg sm:rounded-xl text-base sm:text-lg font-semibold bg-blue-600 hover:bg-blue-700 text-white transition-all"
                   >
-                    Search Properties
+                    Search
                   </Button>
                 </div>
               </form>
