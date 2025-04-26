@@ -11,7 +11,8 @@ import {
   LogOut, 
   PlusCircle, 
   Heart,
-  Building2
+  Building2,
+  Shield
 } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -113,12 +114,20 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
       href: '/properties/create', 
       icon: <PlusCircle className="h-4 w-4 mr-1" />,
       authRequired: true
+    },
+    
+    { 
+      name: 'Admin Dashboard', 
+      href: '/admin', 
+      icon: <Shield className="h-4 w-4 mr-1" />,
+      adminRequired: true
     }
   ];
 
-  // Filter links based on authentication status
+  // Filter links based on authentication status and role
   const filteredNavLinks = navLinks.filter(link => 
-    !link.authRequired || (link.authRequired && status === 'authenticated')
+    (!link.authRequired || (link.authRequired && status === 'authenticated')) && 
+    (!link.adminRequired || (link.adminRequired && session?.user?.role === 'admin'))
   );
 
   return (
@@ -220,6 +229,15 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
                           </Link>
                         </DropdownMenuItem>
                       )}
+
+                      {session.user.role === 'admin' && (
+                        <DropdownMenuItem asChild>
+                          <Link href="/admin" className="cursor-pointer flex items-center">
+                            <Shield className="mr-2 h-4 w-4" />
+                            <span>Admin Dashboard</span>
+                          </Link>
+                        </DropdownMenuItem>
+                      )}
                       
                       <DropdownMenuSeparator />
                       
@@ -272,9 +290,14 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
             mobileMenuOpen ? 'fixed inset-0 z-50' : 'hidden'
           } md:hidden`}
         >
-          <div className="fixed inset-0 bg-black/25" onClick={() => setMobileMenuOpen(false)} />
+          {/* Backdrop with lower z-index */}
+          <div 
+            className="fixed inset-0 bg-black/25 z-40" 
+            onClick={() => setMobileMenuOpen(false)} 
+          />
           
-          <div className="fixed inset-y-0 right-0 z-10 w-full overflow-y-auto bg-white px-6 py-6 sm:max-w-sm sm:ring-1 sm:ring-gray-900/10">
+          {/* Mobile menu content with higher z-index */}
+          <div className="overflow-y-auto inset-y-0 right-0 z-50 w-full bg-white px-6 py-6 sm:max-w-sm sm:ring-1 sm:ring-gray-900/10">
             <div className="flex items-center justify-between">
               <Link href="/" className="-m-1.5 p-1.5" onClick={() => setMobileMenuOpen(false)}>
                 <Building2 className="h-8 w-auto text-blue-600" />
@@ -291,7 +314,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
             <div className="mt-6 flow-root">
               <div className="-my-6 divide-y divide-gray-200">
                 <div className="space-y-2 py-6">
-                  {navLinks.map((link) => (
+                  {filteredNavLinks.map((link) => (
                     <Link
                       key={link.href}
                       href={link.href}
@@ -323,6 +346,16 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
                         <Heart className="h-5 w-5 mr-2" />
                         Wishlist
                       </Link>
+                      {session?.user?.role === 'admin' && (
+                        <Link
+                          href="/admin"
+                          className="flex items-center -mx-3 px-3 py-2 rounded-lg text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
+                          onClick={() => setMobileMenuOpen(false)}
+                        >
+                          <Shield className="h-5 w-5 mr-2" />
+                          Admin Dashboard
+                        </Link>
+                      )}
                       <button
                         className="flex w-full items-center -mx-3 px-3 py-2 rounded-lg text-base font-semibold leading-7 text-red-600 hover:bg-gray-50"
                         onClick={() => {
@@ -348,7 +381,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
                         <Button
                           className="w-full"
                           onClick={() => {
-                            router.push('/login');
+                            router.push('/signup');
                             setMobileMenuOpen(false);
                           }}
                         >
