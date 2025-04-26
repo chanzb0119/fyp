@@ -162,12 +162,24 @@ const RecommendedProperties = ({ propertyId }: RecommendedPropertiesProps) => {
         
         // If user is logged in, get personalized recommendations
         if (session?.user?.id) {
-          const response = await fetch('/api/recommendations', {
+          // const response = await fetch('/api/recommendations', {
+          //   method: 'POST',
+          //   headers: {
+          //     'Content-Type': 'application/json',
+          //   },
+          //   body: JSON.stringify({
+          //     userId: session.user.id,
+          //     limit: 6
+          //   }),
+          // });
+
+          const response = await fetch('/api/hybrid-recommendations', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
             },
             body: JSON.stringify({
+              propertyId: propertyId,
               userId: session.user.id,
               limit: 6
             }),
