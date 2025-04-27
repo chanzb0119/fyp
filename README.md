@@ -1,34 +1,76 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+You're right - let me update the README to accurately reflect that the Render service needs manual restart. Here's the corrected version:
 
-## Getting Started
+# Property Rental Website with Hybrid Recommender System
 
-First, run the development server:
+A modern property rental platform built with Next.js and FastAPI, featuring a hybrid recommender system that combines collaborative filtering and content-based techniques to provide personalized property recommendations.
 
+## Live Demo
+
+- **Website**: [https://fyp1-murex.vercel.app/](https://fyp1-murex.vercel.app/)
+- **API**: [https://property-recommender-api.onrender.com](https://property-recommender-api.onrender.com)
+
+> **Important**: The API service is hosted on Render's free tier, which automatically spins down after 15 minutes of inactivity. Unlike automatic restart services, **the API requires manual restart through the Render dashboard**. If the recommendation section keeps loading indefinitely, the API service is likely sleeping and needs to be manually restarted.
+
+## Features
+
+- 🏠 Property listing and search functionality
+- 🔍 Advanced filtering (location, price, property type, etc.)
+- 🗺️ Google Maps integration for property locations
+- 👤 User authentication with email verification
+- 💼 Landlord verification system
+- ⭐ Wishlist functionality
+- 🤖 Hybrid recommender system (NCF + Content-based)
+- 📱 Fully responsive design
+- 👨‍💼 Admin dashboard for managing users and applications
+
+## Tech Stack
+
+### Frontend
+- **Framework**: Next.js 15.0.0
+- **UI Library**: Tailwind CSS 3.4.15
+- **Authentication**: NextAuth.js
+- **Database**: Supabase (PostgreSQL)
+- **Maps**: Google Maps API
+- **Deployment**: Vercel
+
+### Backend (Recommender System)
+- **Framework**: FastAPI 0.109.0
+- **ML Libraries**: TensorFlow, Scikit-learn
+- **Deployment**: Render
+
+### Installation
+
+1. Clone the repository:
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+git clone https://github.com/yourusername/property-rental-website.git
+cd property-rental-website
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+2. Install frontend dependencies:
+```bash
+npm install
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+3. Set up environment variables:
+```bash
+cp .env.example .env.local
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Fill in the required environment variables:
+```
+NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_key
+NEXT_PUBLIC_GOOGLE_MAPS_API_KEY=your_google_maps_key
+NEXTAUTH_SECRET=your_nextauth_secret
+GOOGLE_CLIENT_ID=your_google_client_id
+GOOGLE_CLIENT_SECRET=your_google_client_secret
+SMTP_HOST=your_smtp_host
+SMTP_PORT=your_smtp_port
+SMTP_USER=your_smtp_user
+SMTP_PASSWORD=your_smtp_password
+```
 
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-This project is deployed on https://fyp1-murex.vercel.app/
+4. Run the development server:
+```bash
+npm run dev
+```
