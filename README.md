@@ -1,5 +1,3 @@
-You're right - let me update the README to accurately reflect that the Render service needs manual restart. Here's the corrected version:
-
 # Property Rental Website with Hybrid Recommender System
 
 A modern property rental platform built with Next.js and FastAPI, featuring a hybrid recommender system that combines collaborative filtering and content-based techniques to provide personalized property recommendations.
@@ -9,7 +7,7 @@ A modern property rental platform built with Next.js and FastAPI, featuring a hy
 - **Website**: [https://fyp1-murex.vercel.app/](https://fyp1-murex.vercel.app/)
 - **API**: [https://property-recommender-api.onrender.com](https://property-recommender-api.onrender.com)
 
-> **Important**: The API service is hosted on Render's free tier, which automatically spins down after 15 minutes of inactivity. Unlike automatic restart services, **the API requires manual restart through the Render dashboard**. If the recommendation section keeps loading indefinitely, the API service is likely sleeping and needs to be manually restarted.
+> **Important**: The API service is hosted on Render's free tier, which automatically spins down after 15 minutes of inactivity. **The API requires manual restart through the Render dashboard**. If the recommendation section keeps loading indefinitely, the API service is likely sleeping and needs to be manually restarted.
 
 ## Features
 
@@ -23,22 +21,7 @@ A modern property rental platform built with Next.js and FastAPI, featuring a hy
 - 📱 Fully responsive design
 - 👨‍💼 Admin dashboard for managing users and applications
 
-## Tech Stack
-
-### Frontend
-- **Framework**: Next.js 15.0.0
-- **UI Library**: Tailwind CSS 3.4.15
-- **Authentication**: NextAuth.js
-- **Database**: Supabase (PostgreSQL)
-- **Maps**: Google Maps API
-- **Deployment**: Vercel
-
-### Backend (Recommender System)
-- **Framework**: FastAPI 0.109.0
-- **ML Libraries**: TensorFlow, Scikit-learn
-- **Deployment**: Render
-
-### Installation
+## Installation
 
 1. Clone the repository:
 ```bash
