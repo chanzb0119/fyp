@@ -25,8 +25,7 @@ A modern property rental platform built with Next.js and FastAPI, featuring a hy
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/yourusername/property-rental-website.git
-cd property-rental-website
+git clone https://github.com/chanzb0119/fyp.git
 ```
 
 2. Install frontend dependencies:
