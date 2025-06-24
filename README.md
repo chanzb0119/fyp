@@ -4,11 +4,7 @@ A modern property rental platform built with Next.js and FastAPI, featuring a hy
 
 ## Live Demo
 
-<<<<<<< HEAD
 - **Website**: [https://fyp-renralhome.vercel.app/](https://fyp-rentalhome.vercel.app/)
-=======
-- **Website**: [https://fyp1-murex.vercel.app/](https://fyp-rentalhome.vercel.app/)
->>>>>>> 030235a0660b2f4d06a1ffdf6e0bbb545b3427e3
 - **API**: [https://property-recommender-api.onrender.com](https://property-recommender-api.onrender.com)
 
 > **Important**: The API service is hosted on Render's free tier, which automatically spins down after 15 minutes of inactivity. **The API requires manual restart through the Render dashboard**. If the recommendation section keeps loading indefinitely, the API service is likely sleeping and needs to be manually restarted.
